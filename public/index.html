@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KCAU SMART DINING SYSTEM</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>KCAU Smart Dining System - Campus Cafeteria</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -14,22 +14,24 @@
         <div id="login-screen" class="screen">
             <div class="login-content">
                 <div class="logo">
-                    <h1>KCAU SMART DINING SYSTEM</h1>
-                    <p>Good food, fast.</p>
+                    <div class="logo-icon">🍽️</div>
+                    <h1>KCAU SMART DINING</h1>
+                    <p>University Cafeteria Online Ordering</p>
                 </div>
                 <div class="input-group">
-                    <label for="student-id">Student ID</label>
-                    <input type="text" id="student-id" placeholder="e.g. KCA/1234/23">
+                    <label for="student-id">Student ID / Staff ID</label>
+                    <input type="text" id="student-id" placeholder="e.g. KCA/1234/23" value="KCA/1234/23">
                 </div>
                 <div class="input-group">
                     <label for="password">Password</label>
                     <div class="password-wrapper" style="position: relative;">
-                        <input type="password" id="password" placeholder="••••••••" style="width: 100%;">
-                        <span class="password-toggle" onclick="togglePassword('password', this)" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; user-select: none;">👁️</span>
+                        <input type="password" id="password" placeholder="••••••••" value="password123" style="width: 100%;">
+                        <span class="password-toggle" onclick="togglePassword('password', this)" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; user-select: none;">👁️</span>
                     </div>
                 </div>
-                <button id="login-btn" class="btn-primary">Login</button>
-                <p class="signup-link">Don't have an account? <a href="#" id="signup-link">Sign up</a></p>
+                <button id="login-btn" class="btn-primary">Sign In to Cafeteria</button>
+                <button id="demo-btn" class="btn-primary" style="margin-top: 10px; background: #2563eb;">🚀 Quick Preview Full App</button>
+                <p class="signup-link">Don't have an account? <a href="#" id="signup-link">Create Account</a></p>
             </div>
         </div>
 
@@ -37,12 +39,13 @@
         <div id="signup-screen" class="screen" style="display: none;">
             <div class="login-content">
                 <div class="logo">
-                    <h1>KCAU SMART DINING SYSTEM</h1>
-                    <p>Create Account</p>
+                    <div class="logo-icon">📝</div>
+                    <h1>Create Cafeteria Account</h1>
+                    <p>Join KCAU Smart Dining System</p>
                 </div>
                 <div class="input-group">
                     <label for="signup-name">Full Name</label>
-                    <input type="text" id="signup-name" placeholder="John Doe">
+                    <input type="text" id="signup-name" placeholder="Alex Kiprop">
                 </div>
                 <div class="input-group">
                     <label for="signup-id">Student ID</label>
@@ -52,220 +55,388 @@
                     <label for="signup-password">Password</label>
                     <div class="password-wrapper" style="position: relative;">
                         <input type="password" id="signup-password" placeholder="••••••••" style="width: 100%;">
-                        <span class="password-toggle" onclick="togglePassword('signup-password', this)" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; user-select: none;">👁️</span>
+                        <span class="password-toggle" onclick="togglePassword('signup-password', this)" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; user-select: none;">👁️</span>
                     </div>
                 </div>
-                <button id="create-account-btn" class="btn-primary">Sign Up</button>
-                <p class="signup-link">Already have an account? <a href="#" id="back-to-login-link">Log in</a></p>
+                <button id="create-account-btn" class="btn-primary">Complete Registration</button>
+                <p class="signup-link">Already have an account? <a href="#" id="back-to-login-link">Back to Sign In</a></p>
             </div>
         </div>
 
-
         <!-- Screen 2: Student Menu -->
         <div id="student-menu" class="screen" style="display: none;">
+            <!-- Top Sticky Modern Navigation Bar -->
             <header class="app-header">
-                <h2>KCAU SMART DINING SYSTEM</h2>
-                <div class="cart-icon">
-                    🛒
-                    <span id="cart-badge" class="badge">0</span>
+                <div class="container-max header-inner">
+                    <div class="brand-wrapper">
+                        <div class="brand-icon">🍽️</div>
+                        <div class="brand-text">
+                            <h2>KCAU SMART DINING</h2>
+                            <span class="brand-status">Main Cafeteria • Open Now</span>
+                        </div>
+                    </div>
+
+                    <div class="header-search">
+                        <span class="header-search-icon">🔍</span>
+                        <input type="text" id="menu-search-input" placeholder="Search dishes, drinks, snacks...">
+                    </div>
+
+                    <div class="header-actions">
+                        <div class="user-badge">
+                            <div class="user-avatar">👤</div>
+                            <span id="user-greeting-name">Alex Kiprop</span>
+                        </div>
+                        <div class="cart-icon-wrapper" onclick="document.getElementById('checkout-btn').click()">
+                            <span class="cart-icon">🛒</span>
+                            <span id="cart-badge" class="badge">0</span>
+                        </div>
+                    </div>
                 </div>
             </header>
             
-            <div class="welcome-banner">
-                <div class="welcome-content">
-                    <h3>Welcome, <span id="user-greeting-name">Student</span>!</h3>
-                    <p>What are you craving today?</p>
+            <!-- Hero / Welcome Banner -->
+            <section class="welcome-section">
+                <div class="container-max">
+                    <div class="welcome-banner">
+                        <div class="welcome-content">
+                            <h3>Welcome, <span id="welcome-name-display">Alex</span>! 🍲</h3>
+                            <p>What delicious meal are you craving today? Order ahead to skip campus lunch lines.</p>
+                            <div class="welcome-features">
+                                <span class="feature-tag">⚡ 5-10 Min Prep</span>
+                                <span class="feature-tag">💳 M-Pesa &amp; Airtel</span>
+                                <span class="feature-tag">💵 Pay at Counter</span>
+                                <span class="feature-tag">⭐ Campus Fresh</span>
+                            </div>
+                        </div>
+                        <div class="welcome-mascot">
+                            <img 
+                                src="https://images.unsplash.com/photo-1577219491135-ce391730fb2c?auto=format&fit=crop&w=240&h=240&q=80" 
+                                alt="Cafeteria Chef" 
+                                class="chef-photo"
+                            >
+                        </div>
+                    </div>
                 </div>
-                <div class="welcome-mascot">
-                    <!-- Real chef photo -->
-                    <img 
-                        src="https://images.unsplash.com/photo-1577219491135-ce391730fb2c?auto=format&fit=crop&w=200&h=200&q=80" 
-                        alt="Chef" 
-                        class="mascot-img chef-photo"
-                    >
-                </div>
-            </div>
+            </section>
 
-            <div class="categories-scroll">
-                <button class="pill active" data-filter="all">All</button>
-                <button class="pill" data-filter="breakfast">Breakfast</button>
-                <button class="pill" data-filter="lunch">Lunch</button>
-                <button class="pill" data-filter="drinks">Drinks</button>
-                <button class="pill" data-filter="fruits">Fruits</button>
-            </div>
+            <!-- Category Pills -->
+            <section class="categories-section">
+                <div class="container-max">
+                    <div class="categories-scroll">
+                        <button class="pill active" data-filter="all">🍽️ All Dishes</button>
+                        <button class="pill" data-filter="breakfast">🍳 Breakfast</button>
+                        <button class="pill" data-filter="lunch">🍗 Lunch &amp; Mains</button>
+                        <button class="pill" data-filter="drinks">🧃 Drinks</button>
+                        <button class="pill" data-filter="fruits">🍎 Fresh Fruits</button>
+                    </div>
+                </div>
+            </section>
 
-            <div class="food-grid">
-                <!-- Card 1 -->
-                <div class="food-card" data-category="lunch">
-                    <img src="images/chicken_and_rice.png" alt="Chicken &amp; Rice" class="food-img">
-                    <div class="food-info">
-                        <h3>Chicken &amp; Rice</h3>
-                        <p class="price">KES 150</p>
-                        <button class="btn-add" onclick="addToCart('Chicken & Rice', 150)">+ Add</button>
-                    </div>
-                </div>
-                <!-- Card 2 -->
-                <div class="food-card" data-category="drinks">
-                    <img src="images/fresh_juice.png" alt="Fresh Juice" class="food-img">
-                    <div class="food-info">
-                        <h3>Fresh Juice</h3>
-                        <p class="price">KES 80</p>
-                        <button class="btn-add" onclick="addToCart('Fresh Juice', 80)">+ Add</button>
-                    </div>
-                </div>
-                <!-- Card 3 -->
-                <div class="food-card" data-category="lunch">
-                    <img src="images/beef_burger.png" alt="Beef Burger" class="food-img">
-                    <div class="food-info">
-                        <h3>Beef Burger</h3>
-                        <p class="price">KES 200</p>
-                        <button class="btn-add" onclick="addToCart('Beef Burger', 200)">+ Add</button>
-                    </div>
-                </div>
-                <!-- Card 4 -->
-                <div class="food-card" data-category="drinks">
-                    <img src="images/coffee.png" alt="Coffee" class="food-img">
-                    <div class="food-info">
-                        <h3>Coffee</h3>
-                        <p class="price">KES 50</p>
-                        <button class="btn-add" onclick="addToCart('Coffee', 50)">+ Add</button>
-                    </div>
-                </div>
-                <!-- Card 5 -->
-                <div class="food-card" data-category="breakfast">
-                    <img src="images/pancakes.png" alt="Pancakes" class="food-img">
-                    <div class="food-info">
-                        <h3>Pancakes</h3>
-                        <p class="price">KES 100</p>
-                        <button class="btn-add" onclick="addToCart('Pancakes', 100)">+ Add</button>
-                    </div>
-                </div>
-                <!-- Card 6 -->
-                <div class="food-card" data-category="lunch">
-                    <img src="images/fries.png" alt="Fries" class="food-img">
-                    <div class="food-info">
-                        <h3>Fries</h3>
-                        <p class="price">KES 120</p>
-                        <button class="btn-add" onclick="addToCart('Fries', 120)">+ Add</button>
-                    </div>
-                </div>
-                <!-- Card 7 -->
-                <div class="food-card" data-category="breakfast">
-                    <img src="images/eggs_toast.png" alt="Eggs &amp; Toast" class="food-img">
-                    <div class="food-info">
-                        <h3>Eggs &amp; Toast</h3>
-                        <p class="price">KES 150</p>
-                        <button class="btn-add" onclick="addToCart('Eggs & Toast', 150)">+ Add</button>
-                    </div>
-                </div>
-                <!-- Card 8 -->
-                <div class="food-card" data-category="drinks">
-                    <img src="images/coca_cola.png" alt="Coca Cola" class="food-img">
-                    <div class="food-info">
-                        <h3>Soda</h3>
-                        <p class="price">KES 60</p>
-                        <button class="btn-add" onclick="addToCart('Soda', 60)">+ Add</button>
-                    </div>
-                </div>
-                <!-- Card 9 -->
-                <div class="food-card" data-category="lunch">
-                    <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=500&q=60" alt="Pizza" class="food-img">
-                    <div class="food-info">
-                        <h3>Pizza Slice</h3>
-                        <p class="price">KES 150</p>
-                        <button class="btn-add" onclick="addToCart('Pizza Slice', 150)">+ Add</button>
-                    </div>
-                </div>
-                <!-- Card 10 -->
-                <div class="food-card" data-category="breakfast">
-                    <img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=500&q=60" alt="Cake" class="food-img">
-                    <div class="food-info">
-                        <h3>Cake Slice</h3>
-                        <p class="price">KES 120</p>
-                        <button class="btn-add" onclick="addToCart('Cake Slice', 120)">+ Add</button>
-                    </div>
-                </div>
-                <!-- Card 11 -->
-                <div class="food-card" data-category="breakfast">
-                    <img src="https://images.unsplash.com/photo-1551024601-bec78aea704b?auto=format&fit=crop&w=500&q=60" alt="Donuts" class="food-img">
-                    <div class="food-info">
-                        <h3>Donuts (2 pcs)</h3>
-                        <p class="price">KES 100</p>
-                        <button class="btn-add" onclick="addToCart('Donuts (2 pcs)', 100)">+ Add</button>
-                    </div>
-                </div>
-                <!-- Card 12 -->
-                <div class="food-card" data-category="fruits">
-                    <img src="https://images.unsplash.com/photo-1610832958506-aa56368176cf?auto=format&fit=crop&w=500&q=60" alt="Fruit Bowl" class="food-img">
-                    <div class="food-info">
-                        <h3>Fruit Bowl</h3>
-                        <p class="price">KES 150</p>
-                        <button class="btn-add" onclick="addToCart('Fruit Bowl', 150)">+ Add</button>
-                    </div>
-                </div>
-                <!-- Card 13 -->
-                <div class="food-card" data-category="lunch">
-                    <img src="https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=500&q=60" alt="Indomie Noodles" class="food-img">
-                    <div class="food-info">
-                        <h3>Indomie Noodles</h3>
-                        <p class="price">KES 80</p>
-                        <button class="btn-add" onclick="addToCart('Indomie Noodles', 80)">+ Add</button>
-                    </div>
-                </div>
-                <!-- Card 14 -->
-                <div class="food-card" data-category="fruits">
-                    <img src="https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?auto=format&fit=crop&w=500&q=60" alt="Fruit Juice" class="food-img">
-                    <div class="food-info">
-                        <h3>Fruit Juice</h3>
-                        <p class="price">KES 80</p>
-                        <button class="btn-add" onclick="addToCart('Fruit Juice', 80)">+ Add</button>
-                    </div>
-                </div>
-            </div>
+            <!-- Food Grid -->
+            <section class="food-section">
+                <div class="container-max">
+                    <div class="food-grid">
+                        <!-- Card 1 -->
+                        <div class="food-card" data-category="lunch">
+                            <div class="card-img-wrapper">
+                                <img src="images/chicken_and_rice.png" alt="Chicken &amp; Rice" class="food-img">
+                                <span class="card-category-badge">Lunch</span>
+                            </div>
+                            <div class="food-info">
+                                <div class="food-info-top">
+                                    <h3>Chicken &amp; Rice</h3>
+                                    <p class="food-desc">Grilled spiced chicken served with fragrant yellow rice and gravy.</p>
+                                </div>
+                                <div class="food-info-bottom">
+                                    <span class="price">KES 150</span>
+                                    <button class="btn-add" onclick="addToCart('Chicken & Rice', 150)">+ Add</button>
+                                </div>
+                            </div>
+                        </div>
 
+                        <!-- Card 2 -->
+                        <div class="food-card" data-category="drinks">
+                            <div class="card-img-wrapper">
+                                <img src="images/fresh_juice.png" alt="Fresh Juice" class="food-img">
+                                <span class="card-category-badge">Drinks</span>
+                            </div>
+                            <div class="food-info">
+                                <div class="food-info-top">
+                                    <h3>Fresh Mango Juice</h3>
+                                    <p class="food-desc">Chilled, naturally squeezed local mango juice without preservatives.</p>
+                                </div>
+                                <div class="food-info-bottom">
+                                    <span class="price">KES 80</span>
+                                    <button class="btn-add" onclick="addToCart('Fresh Juice', 80)">+ Add</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card 3 -->
+                        <div class="food-card" data-category="lunch">
+                            <div class="card-img-wrapper">
+                                <img src="images/beef_burger.png" alt="Beef Burger" class="food-img">
+                                <span class="card-category-badge">Lunch</span>
+                            </div>
+                            <div class="food-info">
+                                <div class="food-info-top">
+                                    <h3>Classic Beef Burger</h3>
+                                    <p class="food-desc">Juicy grilled beef patty, melted cheddar, crisp lettuce, and special sauce.</p>
+                                </div>
+                                <div class="food-info-bottom">
+                                    <span class="price">KES 200</span>
+                                    <button class="btn-add" onclick="addToCart('Beef Burger', 200)">+ Add</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card 4 -->
+                        <div class="food-card" data-category="drinks">
+                            <div class="card-img-wrapper">
+                                <img src="images/coffee.png" alt="Coffee" class="food-img">
+                                <span class="card-category-badge">Drinks</span>
+                            </div>
+                            <div class="food-info">
+                                <div class="food-info-top">
+                                    <h3>Hot Kenyan Coffee</h3>
+                                    <p class="food-desc">Freshly brewed aromatic Kenyan Arabica blend to power your classes.</p>
+                                </div>
+                                <div class="food-info-bottom">
+                                    <span class="price">KES 50</span>
+                                    <button class="btn-add" onclick="addToCart('Coffee', 50)">+ Add</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card 5 -->
+                        <div class="food-card" data-category="breakfast">
+                            <div class="card-img-wrapper">
+                                <img src="images/pancakes.png" alt="Pancakes" class="food-img">
+                                <span class="card-category-badge">Breakfast</span>
+                            </div>
+                            <div class="food-info">
+                                <div class="food-info-top">
+                                    <h3>Golden Pancakes (3 pcs)</h3>
+                                    <p class="food-desc">Fluffy golden hotcakes served with butter and pure honey drizzle.</p>
+                                </div>
+                                <div class="food-info-bottom">
+                                    <span class="price">KES 100</span>
+                                    <button class="btn-add" onclick="addToCart('Pancakes', 100)">+ Add</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card 6 -->
+                        <div class="food-card" data-category="lunch">
+                            <div class="card-img-wrapper">
+                                <img src="images/fries.png" alt="Fries" class="food-img">
+                                <span class="card-category-badge">Lunch</span>
+                            </div>
+                            <div class="food-info">
+                                <div class="food-info-top">
+                                    <h3>Crispy French Fries</h3>
+                                    <p class="food-desc">Golden crisp potato chips sprinkled with cafeteria herb salt.</p>
+                                </div>
+                                <div class="food-info-bottom">
+                                    <span class="price">KES 120</span>
+                                    <button class="btn-add" onclick="addToCart('Fries', 120)">+ Add</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card 7 -->
+                        <div class="food-card" data-category="breakfast">
+                            <div class="card-img-wrapper">
+                                <img src="images/eggs_toast.png" alt="Eggs &amp; Toast" class="food-img">
+                                <span class="card-category-badge">Breakfast</span>
+                            </div>
+                            <div class="food-info">
+                                <div class="food-info-top">
+                                    <h3>Sunny Eggs &amp; Butter Toast</h3>
+                                    <p class="food-desc">Two free-range eggs fried sunny-side up with toasted brown bread.</p>
+                                </div>
+                                <div class="food-info-bottom">
+                                    <span class="price">KES 150</span>
+                                    <button class="btn-add" onclick="addToCart('Eggs & Toast', 150)">+ Add</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card 8 -->
+                        <div class="food-card" data-category="drinks">
+                            <div class="card-img-wrapper">
+                                <img src="images/coca_cola.png" alt="Coca Cola" class="food-img">
+                                <span class="card-category-badge">Drinks</span>
+                            </div>
+                            <div class="food-info">
+                                <div class="food-info-top">
+                                    <h3>Chilled Soda (500ml)</h3>
+                                    <p class="food-desc">Ice-cold Coca-Cola, Fanta, or Sprite glass bottle.</p>
+                                </div>
+                                <div class="food-info-bottom">
+                                    <span class="price">KES 60</span>
+                                    <button class="btn-add" onclick="addToCart('Soda', 60)">+ Add</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card 9 -->
+                        <div class="food-card" data-category="lunch">
+                            <div class="card-img-wrapper">
+                                <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=500&q=60" alt="Pizza" class="food-img">
+                                <span class="card-category-badge">Lunch</span>
+                            </div>
+                            <div class="food-info">
+                                <div class="food-info-top">
+                                    <h3>Cafeteria Pizza Slice</h3>
+                                    <p class="food-desc">Stone-baked mozzarella slice with herb tomato reduction.</p>
+                                </div>
+                                <div class="food-info-bottom">
+                                    <span class="price">KES 150</span>
+                                    <button class="btn-add" onclick="addToCart('Pizza Slice', 150)">+ Add</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card 10 -->
+                        <div class="food-card" data-category="breakfast">
+                            <div class="card-img-wrapper">
+                                <img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=500&q=60" alt="Cake" class="food-img">
+                                <span class="card-category-badge">Breakfast</span>
+                            </div>
+                            <div class="food-info">
+                                <div class="food-info-top">
+                                    <h3>Rich Chocolate Cake</h3>
+                                    <p class="food-desc">Moist chocolate sponge layer with dark cocoa glaze.</p>
+                                </div>
+                                <div class="food-info-bottom">
+                                    <span class="price">KES 120</span>
+                                    <button class="btn-add" onclick="addToCart('Cake Slice', 120)">+ Add</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card 11 -->
+                        <div class="food-card" data-category="breakfast">
+                            <div class="card-img-wrapper">
+                                <img src="https://images.unsplash.com/photo-1551024601-bec78aea704b?auto=format&fit=crop&w=500&q=60" alt="Donuts" class="food-img">
+                                <span class="card-category-badge">Breakfast</span>
+                            </div>
+                            <div class="food-info">
+                                <div class="food-info-top">
+                                    <h3>Glazed Donuts (2 pcs)</h3>
+                                    <p class="food-desc">Light, pillowy dough rings with classic sugar-vanilla glaze.</p>
+                                </div>
+                                <div class="food-info-bottom">
+                                    <span class="price">KES 100</span>
+                                    <button class="btn-add" onclick="addToCart('Donuts (2 pcs)', 100)">+ Add</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card 12 -->
+                        <div class="food-card" data-category="fruits">
+                            <div class="card-img-wrapper">
+                                <img src="https://images.unsplash.com/photo-1610832958506-aa56368176cf?auto=format&fit=crop&w=500&q=60" alt="Fruit Bowl" class="food-img">
+                                <span class="card-category-badge">Fruits</span>
+                            </div>
+                            <div class="food-info">
+                                <div class="food-info-top">
+                                    <h3>Fresh Fruit Bowl</h3>
+                                    <p class="food-desc">Seasonal sweet watermelon, pineapple, papaya, and banana slices.</p>
+                                </div>
+                                <div class="food-info-bottom">
+                                    <span class="price">KES 150</span>
+                                    <button class="btn-add" onclick="addToCart('Fruit Bowl', 150)">+ Add</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card 13 -->
+                        <div class="food-card" data-category="lunch">
+                            <div class="card-img-wrapper">
+                                <img src="https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=500&q=60" alt="Indomie Noodles" class="food-img">
+                                <span class="card-category-badge">Lunch</span>
+                            </div>
+                            <div class="food-info">
+                                <div class="food-info-top">
+                                    <h3>Special Indomie Noodles</h3>
+                                    <p class="food-desc">Wok-tossed noodles with green peppers, onions, and boiled egg.</p>
+                                </div>
+                                <div class="food-info-bottom">
+                                    <span class="price">KES 80</span>
+                                    <button class="btn-add" onclick="addToCart('Indomie Noodles', 80)">+ Add</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card 14 -->
+                        <div class="food-card" data-category="fruits">
+                            <div class="card-img-wrapper">
+                                <img src="https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?auto=format&fit=crop&w=500&q=60" alt="Fruit Juice" class="food-img">
+                                <span class="card-category-badge">Fruits</span>
+                            </div>
+                            <div class="food-info">
+                                <div class="food-info-top">
+                                    <h3>Passion Passion Juice</h3>
+                                    <p class="food-desc">Natural crushed passion fruit nectar with a refreshing tart finish.</p>
+                                </div>
+                                <div class="food-info-bottom">
+                                    <span class="price">KES 80</span>
+                                    <button class="btn-add" onclick="addToCart('Fruit Juice', 80)">+ Add</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Floating Laptop Cart Dock -->
             <div class="sticky-cart" id="sticky-cart-bar">
                 <div class="cart-summary">
-                    <div class="cart-total">Total: KES <span id="cart-total-amount">0</span></div>
-                    <div class="cart-items-label"><span id="cart-items-count-label">0</span> item(s) in cart</div>
+                    <div class="cart-dock-icon">🛒</div>
+                    <div>
+                        <div class="cart-total">Total: <span>KES <span id="cart-total-amount">0</span></span></div>
+                        <div class="cart-items-label"><span id="cart-items-count-label">0</span> item(s) in meal tray</div>
+                    </div>
                 </div>
-                <button id="checkout-btn" class="btn-primary">Checkout &amp; Pay</button>
+                <button id="checkout-btn" class="btn-checkout">Proceed to Checkout →</button>
             </div>
         </div>
 
         <!-- Screen 3: Kitchen Dashboard -->
         <div id="kitchen-dashboard" class="screen" style="display: none;">
             <header class="app-header">
-                <h2>Kitchen Dashboard</h2>
-                <button class="btn-logout" id="logout-btn">Exit</button>
+                <div class="container-max header-inner">
+                    <div class="brand-wrapper">
+                        <div class="brand-icon">👨‍🍳</div>
+                        <div class="brand-text">
+                            <h2>KITCHEN DISPLAY SYSTEM</h2>
+                            <span class="brand-status">Live Orders Queue</span>
+                        </div>
+                    </div>
+                    <button class="btn-logout" id="logout-btn">← Back to Menu</button>
+                </div>
             </header>
 
-            <div style="padding: 1.5rem 1.5rem 0.5rem; background: var(--white); border-bottom: 1px solid #eee;">
-                <h3 style="color: var(--primary-color);">Live Orders</h3>
-            </div>
-
-            <!-- Live Orders Section - populated dynamically from student's order -->
-            <div id="live-orders-section" class="dashboard-section">
-                <!-- Orders will be injected here by app.js -->
-                <div id="no-orders-msg" class="no-orders-msg" style="display:none;">
-                    <span>🍽️</span>
-                    <p>No active orders right now.</p>
+            <div class="container-max">
+                <div id="live-orders-section" class="dashboard-section">
+                    <div id="no-orders-msg" class="no-orders-msg" style="display:none; text-align:center; padding:3rem; grid-column:1/-1;">
+                        <span style="font-size:3rem;">🍽️</span>
+                        <p style="color:var(--text-secondary); margin-top:0.5rem;">No active orders right now.</p>
+                    </div>
                 </div>
             </div>
-
-
         </div>
 
         <!-- Payment Modal -->
         <div id="mpesa-modal" class="modal">
             <div class="modal-content payment-content">
+                <p class="payment-prompt">Total Amount Due: <strong>KES <span id="mpesa-amount">0</span></strong></p>
 
-                <!-- Amount header -->
-                <p class="payment-prompt">Amount due: <strong>KES <span id="mpesa-amount">0</span></strong></p>
-
-                <!-- Payment method tabs -->
                 <div class="pay-tabs">
                     <button class="pay-tab active" data-method="mpesa" onclick="switchPayTab(this, 'mpesa-panel')">M-Pesa</button>
-                    <button class="pay-tab" data-method="airtel" onclick="switchPayTab(this, 'airtel-panel')">Airtel Money</button>
+                    <button class="pay-tab" data-method="airtel" onclick="switchPayTab(this, 'airtel-panel')">Airtel</button>
                     <button class="pay-tab" data-method="card" onclick="switchPayTab(this, 'card-panel')">Card</button>
                     <button class="pay-tab" data-method="cash" onclick="switchPayTab(this, 'cash-panel')">Cash</button>
                 </div>
@@ -273,67 +444,68 @@
                 <div id="mpesa-form-section">
                     <!-- M-Pesa Panel -->
                     <div id="mpesa-panel" class="pay-panel">
-                        <div class="provider-badge mpesa-badge">M-PESA</div>
-                        <div class="input-group" style="text-align:left;">
-                            <label for="mpesa-phone">Safaricom Number</label>
+                        <div class="provider-badge mpesa-badge">🟢 M-PESA STK PUSH</div>
+                        <div class="input-group">
+                            <label for="mpesa-phone">Safaricom Mobile Number</label>
                             <div class="phone-input-wrap">
                                 <span class="phone-prefix">+254</span>
-                                <input type="tel" id="mpesa-phone" placeholder="" maxlength="9">
+                                <input type="tel" id="mpesa-phone" placeholder="712 345 678" maxlength="9">
                             </div>
                         </div>
-                        <button id="mpesa-pay-btn" class="btn-mpesa">Send STK Push</button>
+                        <button id="mpesa-pay-btn" class="btn-mpesa">Request M-Pesa STK Push</button>
                     </div>
 
                     <!-- Airtel Money Panel -->
                     <div id="airtel-panel" class="pay-panel" style="display:none;">
-                        <div class="provider-badge airtel-badge">Airtel Money</div>
-                        <div class="input-group" style="text-align:left;">
-                            <label for="airtel-phone">Airtel Number</label>
+                        <div class="provider-badge airtel-badge">🔴 AIRTEL MONEY</div>
+                        <div class="input-group">
+                            <label for="airtel-phone">Airtel Mobile Number</label>
                             <div class="phone-input-wrap">
                                 <span class="phone-prefix">+254</span>
-                                <input type="tel" id="airtel-phone" placeholder="" maxlength="9">
+                                <input type="tel" id="airtel-phone" placeholder="733 123 456" maxlength="9">
                             </div>
                         </div>
-                        <button id="airtel-pay-btn" class="btn-airtel">Pay with Airtel</button>
+                        <button id="airtel-pay-btn" class="btn-airtel">Pay with Airtel Money</button>
                     </div>
 
                     <!-- Card Panel -->
                     <div id="card-panel" class="pay-panel" style="display:none;">
-                        <div class="provider-badge card-badge">💳 Card</div>
-                        <div class="input-group" style="text-align:left;">
+                        <div class="provider-badge card-badge">💳 CREDIT / DEBIT CARD</div>
+                        <div class="input-group">
                             <label for="card-number">Card Number</label>
-                            <input type="text" id="card-number" placeholder="XXXX XXXX XXXX XXXX" maxlength="19" style="width: 100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: var(--border-radius); font-size: 0.95rem;">
+                            <input type="text" id="card-number" placeholder="4242 •••• •••• 4242" maxlength="19">
                         </div>
-                        <div style="display: flex; gap: 1rem; margin-top: 1rem;">
-                            <div class="input-group" style="text-align:left; flex: 1;">
-                                <label for="card-expiry">Expiry</label>
-                                <input type="text" id="card-expiry" placeholder="MM/YY" maxlength="5" style="width: 100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: var(--border-radius); font-size: 0.95rem;">
+                        <div style="display: flex; gap: 1rem;">
+                            <div class="input-group" style="flex: 1;">
+                                <label for="card-expiry">MM/YY</label>
+                                <input type="text" id="card-expiry" placeholder="12/28" maxlength="5">
                             </div>
-                            <div class="input-group" style="text-align:left; flex: 1;">
+                            <div class="input-group" style="flex: 1;">
                                 <label for="card-cvv">CVV</label>
-                                <input type="password" id="card-cvv" placeholder="123" maxlength="3" style="width: 100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: var(--border-radius); font-size: 0.95rem;">
+                                <input type="password" id="card-cvv" placeholder="123" maxlength="3">
                             </div>
                         </div>
-                        <button id="card-pay-btn" class="btn-card" style="margin-top: 1rem;">Pay KES <span class="cash-amount-ref"></span></button>
+                        <button id="card-pay-btn" class="btn-card">Pay KES <span class="cash-amount-ref">0</span></button>
                     </div>
 
                     <!-- Cash Panel -->
                     <div id="cash-panel" class="pay-panel" style="display:none;">
-                        <div class="provider-badge cash-badge">💵 Cash</div>
-                        <p class="cash-instructions">Pay <strong>KES <span class="cash-amount-ref"></span></strong> at the counter when collecting your order.</p>
-                        <button id="cash-confirm-btn" class="btn-cash">Confirm Cash Payment</button>
+                        <div class="provider-badge cash-badge">💵 PAY AT COUNTER</div>
+                        <p style="font-size:0.95rem; color:var(--text-secondary); margin-bottom:1.25rem;">
+                            Pay <strong>KES <span class="cash-amount-ref">0</span></strong> at the cafeteria collection counter when picking up your order.
+                        </p>
+                        <button id="cash-confirm-btn" class="btn-cash">Confirm Order &amp; Pay at Counter</button>
                     </div>
 
-                    <button id="mpesa-cancel-btn" class="btn-cancel">Cancel</button>
+                    <button id="mpesa-cancel-btn" class="btn-cancel">Cancel &amp; Return to Menu</button>
                 </div>
 
-                <!-- Processing spinner (shared) -->
-                <div id="mpesa-processing-section" style="display: none;">
+                <!-- Processing spinner -->
+                <div id="mpesa-processing-section" style="display: none; text-align: center; padding: 1.5rem 0;">
                     <div class="loader"></div>
-                    <h3 style="margin-top:1.5rem; color:var(--secondary-color);" id="processing-title">Processing Payment</h3>
-                    <p style="margin-top:0.5rem; color:var(--text-light); font-size:0.9rem;" id="processing-msg">Please wait...</p>
+                    <h3 style="margin-top:1.5rem; color:var(--text-primary);" id="processing-title">Processing Order</h3>
+                    <p style="margin-top:0.5rem; color:var(--text-secondary); font-size:0.9rem;" id="processing-msg">Please wait...</p>
                 </div>
-
             </div>
         </div>
 
@@ -341,18 +513,19 @@
         <div id="receipt-modal" class="modal">
             <div class="modal-content receipt-content">
                 <div class="success-icon">✓</div>
-                <h3>Payment Successful</h3>
+                <h3 style="font-size:1.3rem; font-weight:800; color:var(--text-primary);">Order Confirmed!</h3>
                 <div class="receipt-body">
-                    <h4>KCAU SMART DINING SYSTEM Receipt</h4>
+                    <h4 style="font-size:0.95rem; font-weight:700; color:var(--secondary-color); margin-bottom:0.5rem;">KCAU Smart Dining Receipt</h4>
                     <ul id="receipt-items-list" class="receipt-items">
-                        <!-- dynamic items -->
+                        <!-- Dynamic items -->
                     </ul>
                     <div class="receipt-total">
-                        Total Paid: <strong>KES <span id="receipt-total-amount">0</span></strong>
+                        <span>Total Paid:</span>
+                        <strong>KES <span id="receipt-total-amount">0</span></strong>
                     </div>
                 </div>
-                <p style="margin-top: 1rem; text-align: center;">Your order has been sent to the kitchen!</p>
-                <button id="close-receipt-btn" class="btn-primary" style="margin-top: 1rem;">Done</button>
+                <p style="font-size:0.9rem; color:var(--text-secondary); margin-bottom:1rem;">Your meal ticket has been dispatched to the kitchen!</p>
+                <button id="close-receipt-btn" class="btn-primary">View Kitchen Status →</button>
             </div>
         </div>
 

@@ -16,12 +16,16 @@ let authToken = localStorage.getItem('kca_token');
 
 function updateGreeting(nameInput) {
     const greetingEl = document.getElementById('user-greeting-name');
+    const welcomeNameEl = document.getElementById('welcome-name-display');
     if (nameInput && nameInput.trim() !== '') {
         currentStudentName = nameInput;
-        greetingEl.innerText = currentStudentName;
+        if (greetingEl) greetingEl.innerText = currentStudentName;
+        const firstName = currentStudentName.split(' ')[0];
+        if (welcomeNameEl) welcomeNameEl.innerText = firstName;
     } else {
-        currentStudentName = 'Student';
-        greetingEl.innerText = 'Student';
+        currentStudentName = 'Alex Kiprop';
+        if (greetingEl) greetingEl.innerText = 'Alex Kiprop';
+        if (welcomeNameEl) welcomeNameEl.innerText = 'Alex';
     }
 }
 
@@ -57,6 +61,12 @@ async function checkAuthOnLoad() {
     }
 }
 checkAuthOnLoad();
+
+document.getElementById('demo-btn')?.addEventListener('click', () => {
+    updateGreeting('Alex Kiprop');
+    loginScreen.style.display = 'none';
+    studentMenu.style.display = 'flex';
+});
 
 document.getElementById('login-btn').addEventListener('click', async () => {
     const studentIdInput = document.getElementById('student-id').value;
@@ -132,22 +142,54 @@ document.getElementById('create-account-btn').addEventListener('click', async ()
     }
 });
 
+// --- Toast Notification Helper ---
+function showToast(msg) {
+    let toast = document.getElementById('app-toast');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'app-toast';
+        toast.className = 'toast-notification';
+        document.body.appendChild(toast);
+    }
+    toast.innerHTML = `<span>🍽️</span> ${msg}`;
+    toast.classList.add('show');
+    clearTimeout(toast._timer);
+    toast._timer = setTimeout(() => {
+        toast.classList.remove('show');
+    }, 2800);
+}
+
 // --- Cart Logic ---
 let cartTotal = 0;
 let cartItemsCount = 0;
 let cartItems = {};
 
 function updateCartUI() {
-    document.getElementById('cart-total-amount').innerText = cartTotal;
-    document.getElementById('cart-badge').innerText = cartItemsCount;
-    document.getElementById('cart-items-count-label').innerText = cartItemsCount;
+    const totalEl = document.getElementById('cart-total-amount');
+    const badgeEl = document.getElementById('cart-badge');
+    const countLabelEl = document.getElementById('cart-items-count-label');
+    const dock = document.getElementById('sticky-cart-bar');
+
+    if (totalEl) totalEl.innerText = cartTotal;
+    if (badgeEl) badgeEl.innerText = cartItemsCount;
+    if (countLabelEl) countLabelEl.innerText = cartItemsCount;
+
+    // Show floating dock only when items are in cart
+    if (dock) {
+        if (cartItemsCount > 0) {
+            dock.classList.add('active');
+        } else {
+            dock.classList.remove('active');
+        }
+    }
 
     // Animate badge
-    const badge = document.getElementById('cart-badge');
-    badge.style.transform = 'scale(1.3)';
-    setTimeout(() => {
-        badge.style.transform = 'scale(1)';
-    }, 200);
+    if (badgeEl) {
+        badgeEl.style.transform = 'scale(1.35)';
+        setTimeout(() => {
+            badgeEl.style.transform = 'scale(1)';
+        }, 200);
+    }
 }
 
 function addToCart(name, price) {
@@ -160,13 +202,32 @@ function addToCart(name, price) {
         cartItems[name] = { price: price, count: 1 };
     }
 
+    // Visual button feedback
+    try {
+        const activeBtn = event?.currentTarget || event?.target;
+        if (activeBtn && activeBtn.classList?.contains('btn-add')) {
+            const originalText = activeBtn.innerText;
+            activeBtn.innerText = `✓ Added (${cartItems[name].count})`;
+            activeBtn.style.background = '#10B981';
+            activeBtn.style.borderColor = '#10B981';
+            activeBtn.style.color = '#ffffff';
+            setTimeout(() => {
+                activeBtn.innerText = `+ Add (${cartItems[name].count})`;
+                activeBtn.style.background = '';
+                activeBtn.style.borderColor = '';
+                activeBtn.style.color = '';
+            }, 1200);
+        }
+    } catch (e) {}
+
+    showToast(`Added ${name} (KES ${price}) to tray!`);
     updateCartUI();
 }
 
 // --- Checkout Logic ---
 document.getElementById('checkout-btn').addEventListener('click', () => {
     if (cartTotal === 0) {
-        alert("Your cart is empty! Please add some items first.");
+        showToast("Your meal tray is empty! Click '+ Add' on any dish to get started.");
         return;
     }
 
@@ -365,12 +426,10 @@ function toggleOrderStatus(btn) {
     }
 }
 
-// Logout
+// Return to menu from kitchen
 document.getElementById('logout-btn').addEventListener('click', () => {
-    localStorage.removeItem('kca_token');
-    authToken = null;
     kitchenDashboard.style.display = 'none';
-    loginScreen.style.display = 'flex';
+    studentMenu.style.display = 'flex';
 });
 
 // Category pills logic
@@ -392,3 +451,21 @@ pills.forEach(pill => {
         });
     });
 });
+
+// Live Search Filter for Laptop View
+const searchInput = document.getElementById('menu-search-input');
+if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase().trim();
+        foodCards.forEach(card => {
+            const title = card.querySelector('h3')?.innerText.toLowerCase() || '';
+            const desc = card.querySelector('.food-desc')?.innerText.toLowerCase() || '';
+            const category = card.getAttribute('data-category')?.toLowerCase() || '';
+            if (!query || title.includes(query) || desc.includes(query) || category.includes(query)) {
+                card.style.display = 'flex';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    });
+}
