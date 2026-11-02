@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
 /**
  * KCAU Smart Dining System - Java Backend Server
  * 
- * Standalone lightweight HTTP server providing full API compatibility with server.js:
+ * Standalone lightweight Java HTTP server providing core REST APIs:
  *  - POST /api/signup   (User registration with password hashing)
  *  - POST /api/login    (User authentication with HMAC-SHA256 JWT tokens)
  *  - GET  /api/me       (Current authenticated user session)
@@ -306,7 +306,7 @@ public class Server {
                 return;
             }
 
-            // If file doesn't exist, fallback to index.html (SPA routing like server.js)
+            // If file doesn't exist, fallback to index.html (SPA routing)
             if (!Files.exists(requestedFile) || Files.isDirectory(requestedFile)) {
                 requestedFile = PUBLIC_DIR.resolve("index.html").normalize();
             }

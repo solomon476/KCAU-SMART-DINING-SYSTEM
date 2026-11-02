@@ -1,33 +1,31 @@
 {
-  "name": "kca-cafeteria",
+  "name": "kcau-smart-dining-system",
   "version": "1.0.0",
-  "description": "",
-  "main": "server.js",
+  "description": "KCAU Smart Dining System - Standalone Java Backend & Modern Web Client",
+  "main": "Server.java",
   "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js",
+    "start": "java Server.java",
+    "dev": "java Server.java",
+    "java": "java Server.java",
+    "backend": "java Server.java",
+    "run-java": "bash run-java.sh",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/solomon476/Kca-Cafeteria.git"
+    "url": "git+https://github.com/solomon476/KCAU-SMART-DINING-SYSTEM.git"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "java",
+    "java-backend",
+    "kcau",
+    "cafeteria",
+    "smart-dining"
+  ],
+  "author": "Solomon",
   "license": "ISC",
-  "type": "commonjs",
   "bugs": {
-    "url": "https://github.com/solomon476/Kca-Cafeteria/issues"
+    "url": "https://github.com/solomon476/KCAU-SMART-DINING-SYSTEM/issues"
   },
-  "homepage": "https://github.com/solomon476/Kca-Cafeteria#readme",
-  "dependencies": {
-    "bcryptjs": "^3.0.3",
-    "cors": "^2.8.6",
-    "express": "^5.2.1",
-    "jsonwebtoken": "^9.0.3",
-    "mongoose": "^9.7.4"
-  },
-  "devDependencies": {
-    "nodemon": "^3.1.14"
-  }
+  "homepage": "https://github.com/solomon476/KCAU-SMART-DINING-SYSTEM#readme"
 }

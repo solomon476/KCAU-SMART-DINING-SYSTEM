@@ -1,16 +1,11 @@
 {
   "version": 2,
-  "name": "kca-cafeteria",
-  "builds": [
-    {
-      "src": "server.js",
-      "use": "@vercel/node"
-    }
-  ],
+  "name": "kcau-smart-dining-system",
+  "cleanUrls": true,
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "/server.js"
+      "destination": "/public/$1"
     }
   ]
 }

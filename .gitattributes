@@ -1,0 +1,6 @@
+# GitHub Linguist configuration
+# Treat static client assets as vendored so Java is highlighted as the primary language
+*.java linguist-detectable=true
+public/* linguist-vendored=true
+*.json linguist-vendored=true
+*.sh linguist-vendored=true
