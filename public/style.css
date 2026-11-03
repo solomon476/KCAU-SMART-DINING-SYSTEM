@@ -248,6 +248,37 @@ body {
     color: var(--text-secondary);
 }
 
+.btn-signout {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.45rem 0.85rem;
+    background: #FFF1F2;
+    color: #BE123C;
+    border: 1px solid #FECDD3;
+    border-radius: var(--radius-full);
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    white-space: nowrap;
+}
+
+.btn-signout:hover {
+    background: #FFE4E6;
+    color: #9F1239;
+    border-color: #FDA4AF;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(225, 29, 72, 0.15);
+}
+
+@media (max-width: 480px) {
+    .btn-signout {
+        padding: 0.35rem 0.65rem;
+        font-size: 0.75rem;
+    }
+}
+
 .cart-icon-wrapper {
     position: relative;
     display: flex;

@@ -20,17 +20,16 @@
                 </div>
                 <div class="input-group">
                     <label for="student-id">Student ID / Staff ID</label>
-                    <input type="text" id="student-id" placeholder="e.g. KCA/1234/23" value="KCA/1234/23">
+                    <input type="text" id="student-id" placeholder="e.g. KCA/1234/23" autocomplete="username">
                 </div>
                 <div class="input-group">
                     <label for="password">Password</label>
                     <div class="password-wrapper" style="position: relative;">
-                        <input type="password" id="password" placeholder="••••••••" value="password123" style="width: 100%;">
+                        <input type="password" id="password" placeholder="••••••••" autocomplete="current-password" style="width: 100%;">
                         <span class="password-toggle" onclick="togglePassword('password', this)" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; user-select: none;">👁️</span>
                     </div>
                 </div>
                 <button id="login-btn" class="btn-primary">Sign In to Cafeteria</button>
-                <button id="demo-btn" class="btn-primary" style="margin-top: 10px; background: #2563eb;">🚀 Quick Preview Full App</button>
                 <p class="signup-link">Don't have an account? <a href="#" id="signup-link">Create Account</a></p>
             </div>
         </div>
@@ -45,16 +44,16 @@
                 </div>
                 <div class="input-group">
                     <label for="signup-name">Full Name</label>
-                    <input type="text" id="signup-name" placeholder="Alex Kiprop">
+                    <input type="text" id="signup-name" placeholder="e.g. Alex Kiprop" autocomplete="name">
                 </div>
                 <div class="input-group">
                     <label for="signup-id">Student ID</label>
-                    <input type="text" id="signup-id" placeholder="e.g. KCA/1234/23">
+                    <input type="text" id="signup-id" placeholder="e.g. KCA/1234/23" autocomplete="username">
                 </div>
                 <div class="input-group">
                     <label for="signup-password">Password</label>
                     <div class="password-wrapper" style="position: relative;">
-                        <input type="password" id="signup-password" placeholder="••••••••" style="width: 100%;">
+                        <input type="password" id="signup-password" placeholder="••••••••" autocomplete="new-password" style="width: 100%;">
                         <span class="password-toggle" onclick="togglePassword('signup-password', this)" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; user-select: none;">👁️</span>
                     </div>
                 </div>
@@ -82,10 +81,13 @@
                     </div>
 
                     <div class="header-actions">
-                        <div class="user-badge">
+                        <div class="user-badge" id="user-badge-container">
                             <div class="user-avatar">👤</div>
-                            <span id="user-greeting-name">Alex Kiprop</span>
+                            <span id="user-greeting-name">Student</span>
                         </div>
+                        <button id="student-signout-btn" class="btn-signout" title="Sign Out of Cafeteria">
+                            <span>🚪 Sign Out</span>
+                        </button>
                         <div class="cart-icon-wrapper" onclick="document.getElementById('checkout-btn').click()">
                             <span class="cart-icon">🛒</span>
                             <span id="cart-badge" class="badge">0</span>

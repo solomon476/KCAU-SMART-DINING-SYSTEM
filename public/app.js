@@ -9,6 +9,70 @@ const mpesaAmount = document.getElementById('mpesa-amount');
 const mpesaFormSection = document.getElementById('mpesa-form-section');
 const mpesaProcessingSection = document.getElementById('mpesa-processing-section');
 
+// --- Persistent Client Database (Dual-layer for Vercel & Offline Resilience) ---
+const LocalDB = {
+    KEY: 'kca_dining_users_db',
+    getUsers() {
+        try {
+            const raw = localStorage.getItem(this.KEY);
+            if (raw) return JSON.parse(raw);
+            const initialUsers = [
+                {
+                    id: 'demo-1',
+                    name: 'Alex Kiprop',
+                    studentId: 'KCA/1234/23',
+                    password: 'password123',
+                    createdAt: new Date().toISOString()
+                }
+            ];
+            localStorage.setItem(this.KEY, JSON.stringify(initialUsers));
+            return initialUsers;
+        } catch (e) {
+            return [];
+        }
+    },
+    saveUsers(users) {
+        try {
+            localStorage.setItem(this.KEY, JSON.stringify(users));
+        } catch (e) {
+            console.error("LocalDB save failed", e);
+        }
+    },
+    findUser(studentId) {
+        const users = this.getUsers();
+        const norm = (studentId || '').trim().toUpperCase();
+        return users.find(u => (u.studentId || '').trim().toUpperCase() === norm);
+    },
+    createUser(name, studentId, password) {
+        const users = this.getUsers();
+        const norm = (studentId || '').trim().toUpperCase();
+        if (users.some(u => (u.studentId || '').trim().toUpperCase() === norm)) {
+            return { error: `An account with Student ID '${studentId}' already exists.` };
+        }
+        const newUser = {
+            id: 'usr_' + Date.now(),
+            name: name.trim(),
+            studentId: studentId.trim(),
+            password: password,
+            createdAt: new Date().toISOString()
+        };
+        users.push(newUser);
+        this.saveUsers(users);
+        return { success: true, user: newUser };
+    },
+    authenticate(studentId, password) {
+        const user = this.findUser(studentId);
+        if (!user) {
+            return { error: `No account found with Student ID '${studentId}'. Please create an account first!` };
+        }
+        if (user.password !== password) {
+            return { error: 'Incorrect password. Please try again.' };
+        }
+        const token = 'local_token_' + btoa(JSON.stringify({ id: user.id, name: user.name, studentId: user.studentId, time: Date.now() }));
+        return { success: true, token, name: user.name, studentId: user.studentId };
+    }
+};
+
 // --- Auth Logic ---
 
 let currentStudentName = 'Student';
@@ -18,20 +82,21 @@ function updateGreeting(nameInput) {
     const greetingEl = document.getElementById('user-greeting-name');
     const welcomeNameEl = document.getElementById('welcome-name-display');
     if (nameInput && nameInput.trim() !== '') {
-        currentStudentName = nameInput;
+        currentStudentName = nameInput.trim();
         if (greetingEl) greetingEl.innerText = currentStudentName;
         const firstName = currentStudentName.split(' ')[0];
         if (welcomeNameEl) welcomeNameEl.innerText = firstName;
     } else {
-        currentStudentName = 'Alex Kiprop';
-        if (greetingEl) greetingEl.innerText = 'Alex Kiprop';
-        if (welcomeNameEl) welcomeNameEl.innerText = 'Alex';
+        currentStudentName = 'Student';
+        if (greetingEl) greetingEl.innerText = 'Student';
+        if (welcomeNameEl) welcomeNameEl.innerText = 'Student';
     }
 }
 
 // Password visibility toggle
 function togglePassword(inputId, iconEl) {
     const input = document.getElementById(inputId);
+    if (!input) return;
     if (input.type === 'password') {
         input.type = 'text';
     } else {
@@ -42,6 +107,15 @@ function togglePassword(inputId, iconEl) {
 // Auto-login if token exists
 async function checkAuthOnLoad() {
     if (!authToken) return;
+    const cachedName = localStorage.getItem('kca_user_name');
+
+    if (authToken.startsWith('local_token_')) {
+        updateGreeting(cachedName || 'Student');
+        loginScreen.style.display = 'none';
+        studentMenu.style.display = 'flex';
+        return;
+    }
+
     try {
         const res = await fetch('/api/me', {
             headers: { 'Authorization': `Bearer ${authToken}` }
@@ -49,101 +123,187 @@ async function checkAuthOnLoad() {
         if (res.ok) {
             const data = await res.json();
             updateGreeting(data.name);
+            localStorage.setItem('kca_user_name', data.name);
             loginScreen.style.display = 'none';
             studentMenu.style.display = 'flex';
         } else {
-            // Token invalid or expired
             localStorage.removeItem('kca_token');
+            localStorage.removeItem('kca_user_name');
             authToken = null;
         }
     } catch (err) {
-        console.error("Auth check failed:", err);
+        // Fallback for static hosting / offline
+        if (cachedName) {
+            updateGreeting(cachedName);
+            loginScreen.style.display = 'none';
+            studentMenu.style.display = 'flex';
+        }
     }
 }
 checkAuthOnLoad();
 
-document.getElementById('demo-btn')?.addEventListener('click', () => {
-    updateGreeting('Alex Kiprop');
-    loginScreen.style.display = 'none';
-    studentMenu.style.display = 'flex';
-});
-
+// Login button handler
 document.getElementById('login-btn').addEventListener('click', async () => {
-    const studentIdInput = document.getElementById('student-id').value;
+    const studentIdInput = document.getElementById('student-id').value.trim();
     const passwordInput = document.getElementById('password').value;
+    const loginBtn = document.getElementById('login-btn');
     
     if (!studentIdInput || !passwordInput) {
-        alert("Please enter Student ID and Password");
+        showToast("Please enter both Student ID and Password", true);
         return;
     }
 
+    const originalBtnText = loginBtn.innerText;
+    loginBtn.innerText = "Signing In...";
+    loginBtn.disabled = true;
+
     try {
-        const res = await fetch('/api/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ studentId: studentIdInput, password: passwordInput })
-        });
-        const data = await res.json();
-        
-        if (res.ok) {
-            localStorage.setItem('kca_token', data.token);
-            authToken = data.token;
-            updateGreeting(data.name);
-            loginScreen.style.display = 'none';
-            studentMenu.style.display = 'flex';
-        } else {
-            alert(data.error || "Login failed");
+        let loggedIn = false;
+        try {
+            const res = await fetch('/api/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ studentId: studentIdInput, password: passwordInput })
+            });
+
+            if (res.ok) {
+                const data = await res.json();
+                localStorage.setItem('kca_token', data.token);
+                localStorage.setItem('kca_user_name', data.name);
+                authToken = data.token;
+                updateGreeting(data.name);
+                loginScreen.style.display = 'none';
+                studentMenu.style.display = 'flex';
+                showToast(`Welcome back, ${data.name}!`);
+                loggedIn = true;
+            } else if (res.status === 400 || res.status === 401) {
+                const data = await res.json().catch(() => ({}));
+                showToast(data.error || "Incorrect credentials", true);
+                loggedIn = true; // handled by server response
+            }
+        } catch (fetchErr) {
+            // Server offline or static hosting fallback
         }
-    } catch (err) {
-        alert("An error occurred during login.");
+
+        if (!loggedIn) {
+            // Local database fallback
+            const authResult = LocalDB.authenticate(studentIdInput, passwordInput);
+            if (authResult.success) {
+                localStorage.setItem('kca_token', authResult.token);
+                localStorage.setItem('kca_user_name', authResult.name);
+                authToken = authResult.token;
+                updateGreeting(authResult.name);
+                loginScreen.style.display = 'none';
+                studentMenu.style.display = 'flex';
+                showToast(`Welcome, ${authResult.name}!`);
+            } else {
+                showToast(authResult.error, true);
+            }
+        }
+    } finally {
+        loginBtn.innerText = originalBtnText;
+        loginBtn.disabled = false;
     }
 });
 
+// Navigation between Login and Sign Up
 document.getElementById('signup-link').addEventListener('click', (e) => {
     e.preventDefault();
     loginScreen.style.display = 'none';
     signupScreen.style.display = 'flex';
+    document.getElementById('signup-name').focus();
 });
 
 document.getElementById('back-to-login-link').addEventListener('click', (e) => {
     e.preventDefault();
     signupScreen.style.display = 'none';
     loginScreen.style.display = 'flex';
+    document.getElementById('student-id').focus();
 });
 
+// Account Creation (Sign Up) handler
 document.getElementById('create-account-btn').addEventListener('click', async () => {
-    const signupName = document.getElementById('signup-name').value;
-    const signupId = document.getElementById('signup-id').value;
+    const signupName = document.getElementById('signup-name').value.trim();
+    const signupId = document.getElementById('signup-id').value.trim();
     const signupPassword = document.getElementById('signup-password').value;
+    const createBtn = document.getElementById('create-account-btn');
     
     if (!signupName || !signupId || !signupPassword) {
-        alert("Please fill in all fields");
+        showToast("Please fill in all fields to create an account", true);
         return;
     }
 
+    if (signupPassword.length < 4) {
+        showToast("Password must be at least 4 characters long", true);
+        return;
+    }
+
+    const originalBtnText = createBtn.innerText;
+    createBtn.innerText = "Creating Account...";
+    createBtn.disabled = true;
+
     try {
-        const res = await fetch('/api/signup', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name: signupName, studentId: signupId, password: signupPassword })
-        });
-        const data = await res.json();
-        
-        if (res.ok) {
-            alert("Account created successfully! Please log in.");
-            signupScreen.style.display = 'none';
-            loginScreen.style.display = 'flex';
-            document.getElementById('student-id').value = signupId;
-        } else {
-            alert(data.error || "Sign up failed");
+        let created = false;
+        try {
+            const res = await fetch('/api/signup', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name: signupName, studentId: signupId, password: signupPassword })
+            });
+
+            if (res.ok) {
+                LocalDB.createUser(signupName, signupId, signupPassword);
+                showToast("Account created successfully! Please sign in.");
+                created = true;
+            } else if (res.status === 400 || res.status === 409) {
+                const data = await res.json().catch(() => ({}));
+                showToast(data.error || "An account with this ID already exists", true);
+                created = true;
+                return;
+            }
+        } catch (fetchErr) {
+            // Server offline or static hosting fallback
         }
-    } catch (err) {
-        alert("An error occurred during sign up.");
+
+        if (!created) {
+            const localResult = LocalDB.createUser(signupName, signupId, signupPassword);
+            if (localResult.error) {
+                showToast(localResult.error, true);
+                return;
+            }
+            showToast("Account created in database! Please sign in.");
+        }
+
+        // Switch back to login screen with studentId pre-filled
+        signupScreen.style.display = 'none';
+        loginScreen.style.display = 'flex';
+        document.getElementById('student-id').value = signupId;
+        document.getElementById('password').value = '';
+        document.getElementById('signup-name').value = '';
+        document.getElementById('signup-id').value = '';
+        document.getElementById('signup-password').value = '';
+        document.getElementById('password').focus();
+    } finally {
+        createBtn.innerText = originalBtnText;
+        createBtn.disabled = false;
     }
 });
 
+// Sign Out button handler
+document.getElementById('student-signout-btn')?.addEventListener('click', () => {
+    localStorage.removeItem('kca_token');
+    localStorage.removeItem('kca_user_name');
+    authToken = null;
+    currentStudentName = 'Student';
+    updateGreeting('Student');
+    studentMenu.style.display = 'none';
+    loginScreen.style.display = 'flex';
+    document.getElementById('password').value = '';
+    showToast("Signed out successfully");
+});
+
 // --- Toast Notification Helper ---
-function showToast(msg) {
+function showToast(msg, isError = false) {
     let toast = document.getElementById('app-toast');
     if (!toast) {
         toast = document.createElement('div');
@@ -151,12 +311,17 @@ function showToast(msg) {
         toast.className = 'toast-notification';
         document.body.appendChild(toast);
     }
-    toast.innerHTML = `<span>🍽️</span> ${msg}`;
+    toast.innerHTML = `<span>${isError ? '⚠️' : '🍽️'}</span> ${msg}`;
+    if (isError) {
+        toast.style.background = '#B91C1C';
+    } else {
+        toast.style.background = '';
+    }
     toast.classList.add('show');
     clearTimeout(toast._timer);
     toast._timer = setTimeout(() => {
         toast.classList.remove('show');
-    }, 2800);
+    }, 3200);
 }
 
 // --- Cart Logic ---

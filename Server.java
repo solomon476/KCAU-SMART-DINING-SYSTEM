@@ -40,16 +40,126 @@ public class Server {
             .orElse("super_secret_cafeteria_key");
     private static final Path PUBLIC_DIR = Paths.get("public").toAbsolutePath();
 
-    // In-memory user database (studentId -> User)
+    // In-memory cache of user database (normalized studentId -> User)
     private static final Map<String, User> userDatabase = new ConcurrentHashMap<>();
 
-    static {
-        // Pre-seed demo student for instant preview
-        String defaultHash = PasswordUtil.hashPassword("password123");
-        userDatabase.put("KCA/1234/23", new User("demo-1", "Alex Kiprop", "KCA/1234/23", defaultHash));
+    // -------------------------------------------------------------
+    // Persistent Database Manager (JSON Storage)
+    // -------------------------------------------------------------
+    public static class Database {
+        public static final Path DATA_DIR = Paths.get("data").toAbsolutePath();
+        public static final Path USERS_FILE = DATA_DIR.resolve("users.json");
+
+        public static synchronized void init() {
+            try {
+                if (!Files.exists(DATA_DIR)) {
+                    Files.createDirectories(DATA_DIR);
+                }
+                if (!Files.exists(USERS_FILE)) {
+                    // Seed initial student account into users.json so testing works out of the box
+                    String defaultHash = PasswordUtil.hashPassword("password123");
+                    User seedUser = new User("demo-1", "Alex Kiprop", "KCA/1234/23", defaultHash, Instant.now());
+                    userDatabase.put(normalizeId("KCA/1234/23"), seedUser);
+                    saveAllUsers();
+                    System.out.println("📁 Initialized persistent database at: " + USERS_FILE);
+                } else {
+                    loadUsers();
+                    System.out.printf("📁 Loaded %d user(s) from persistent database: %s%n", userDatabase.size(), USERS_FILE);
+                }
+            } catch (Exception e) {
+                System.err.println("❌ Error initializing persistent database: " + e.getMessage());
+            }
+        }
+
+        private static void loadUsers() {
+            try {
+                String content = Files.readString(USERS_FILE, StandardCharsets.UTF_8).trim();
+                if (content.isEmpty() || content.equals("[]")) return;
+
+                Pattern objPattern = Pattern.compile("\\{[^{}]*\\}");
+                Matcher objMatcher = objPattern.matcher(content);
+                int count = 0;
+                while (objMatcher.find()) {
+                    String objJson = objMatcher.group();
+                    Map<String, String> fields = extractJsonFields(objJson);
+                    String id = fields.getOrDefault("id", UUID.randomUUID().toString());
+                    String name = fields.get("name");
+                    String studentId = fields.get("studentId");
+                    String passwordHash = fields.get("passwordHash");
+                    String createdAtStr = fields.get("createdAt");
+                    Instant createdAt = Instant.now();
+                    if (createdAtStr != null && !createdAtStr.isBlank()) {
+                        try {
+                            createdAt = Instant.parse(createdAtStr);
+                        } catch (Exception ignored) {}
+                    }
+
+                    if (name != null && studentId != null && passwordHash != null) {
+                        User user = new User(id, name, studentId, passwordHash, createdAt);
+                        userDatabase.put(normalizeId(studentId), user);
+                        count++;
+                    }
+                }
+            } catch (Exception e) {
+                System.err.println("❌ Failed to load users from file: " + e.getMessage());
+            }
+        }
+
+        public static synchronized boolean saveUser(User user) {
+            userDatabase.put(normalizeId(user.getStudentId()), user);
+            return saveAllUsers();
+        }
+
+        private static synchronized boolean saveAllUsers() {
+            try {
+                StringBuilder sb = new StringBuilder("[\n");
+                boolean first = true;
+                for (User u : userDatabase.values()) {
+                    if (!first) sb.append(",\n");
+                    first = false;
+                    sb.append("  {\n")
+                      .append("    \"id\": \"").append(escapeJson(u.getId())).append("\",\n")
+                      .append("    \"name\": \"").append(escapeJson(u.getName())).append("\",\n")
+                      .append("    \"studentId\": \"").append(escapeJson(u.getStudentId())).append("\",\n")
+                      .append("    \"passwordHash\": \"").append(escapeJson(u.getPasswordHash())).append("\",\n")
+                      .append("    \"createdAt\": \"").append(u.getCreatedAt().toString()).append("\"\n")
+                      .append("  }");
+                }
+                sb.append("\n]\n");
+
+                Path tempFile = DATA_DIR.resolve("users.tmp");
+                Files.writeString(tempFile, sb.toString(), StandardCharsets.UTF_8);
+                try {
+                    Files.move(tempFile, USERS_FILE, java.nio.file.StandardCopyOption.REPLACE_EXISTING, java.nio.file.StandardCopyOption.ATOMIC_MOVE);
+                } catch (Exception ex) {
+                    Files.move(tempFile, USERS_FILE, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+                }
+                return true;
+            } catch (Exception e) {
+                System.err.println("❌ Failed to persist users to disk: " + e.getMessage());
+                return false;
+            }
+        }
+
+        private static Map<String, String> extractJsonFields(String json) {
+            Map<String, String> map = new HashMap<>();
+            Pattern pattern = Pattern.compile("\"([^\"]+)\"\\s*:\\s*\"([^\"]*)\"");
+            Matcher matcher = pattern.matcher(json);
+            while (matcher.find()) {
+                map.put(matcher.group(1), matcher.group(2));
+            }
+            return map;
+        }
+
+        public static String normalizeId(String studentId) {
+            return studentId == null ? "" : studentId.trim().toUpperCase();
+        }
     }
 
     public static void main(String[] args) throws IOException {
+        // Initialize persistent database storage
+        Database.init();
+
         int port = DEFAULT_PORT;
         String envPort = System.getenv("PORT");
         if (envPort != null && !envPort.isBlank()) {
@@ -89,6 +199,7 @@ public class Server {
         System.out.println("☕ KCAU Smart Dining System - Java Backend");
         System.out.printf("🚀 Server running on http://localhost:%d%n", port);
         System.out.println("📁 Serving static files from: " + PUBLIC_DIR);
+        System.out.println("💾 Database: " + Database.USERS_FILE);
         System.out.println("🔐 JWT Authentication enabled");
         System.out.println("=================================================");
     }
@@ -104,11 +215,15 @@ public class Server {
         private final Instant createdAt;
 
         public User(String id, String name, String studentId, String passwordHash) {
+            this(id, name, studentId, passwordHash, Instant.now());
+        }
+
+        public User(String id, String name, String studentId, String passwordHash, Instant createdAt) {
             this.id = id;
             this.name = name;
             this.studentId = studentId;
             this.passwordHash = passwordHash;
-            this.createdAt = Instant.now();
+            this.createdAt = createdAt != null ? createdAt : Instant.now();
         }
 
         public String getId() { return id; }
@@ -150,17 +265,18 @@ public class Server {
             }
 
             studentId = studentId.trim();
-            if (userDatabase.containsKey(studentId)) {
-                sendJsonResponse(exchange, 400, Map.of("error", "An account with this Student ID already exists"));
+            String normId = Database.normalizeId(studentId);
+            if (userDatabase.containsKey(normId)) {
+                sendJsonResponse(exchange, 400, Map.of("error", "An account with Student ID '" + studentId + "' already exists"));
                 return;
             }
 
             String hashedPassword = PasswordUtil.hashPassword(password);
             String userId = UUID.randomUUID().toString();
-            User newUser = new User(userId, name.trim(), studentId, hashedPassword);
-            userDatabase.put(studentId, newUser);
+            User newUser = new User(userId, name.trim(), studentId, hashedPassword, Instant.now());
+            Database.saveUser(newUser);
 
-            sendJsonResponse(exchange, 201, Map.of("message", "Account created successfully!"));
+            sendJsonResponse(exchange, 201, Map.of("message", "Account created successfully! Please sign in."));
         }
     }
 
@@ -189,9 +305,10 @@ public class Server {
             }
 
             studentId = studentId.trim();
-            User user = userDatabase.get(studentId);
+            String normId = Database.normalizeId(studentId);
+            User user = userDatabase.get(normId);
             if (user == null) {
-                sendJsonResponse(exchange, 401, Map.of("error", "No account found with this Student ID. Please sign up first!"));
+                sendJsonResponse(exchange, 401, Map.of("error", "No account found with Student ID '" + studentId + "'. Please sign up first!"));
                 return;
             }
 
@@ -264,9 +381,9 @@ public class Server {
 
             Map<String, Object> status = new HashMap<>();
             status.put("status", "Java Backend is running!");
-            status.put("db", "in-memory");
-            status.put("timestamp", Instant.now().toString());
+            status.put("db", "Persistent JSON Database (" + Database.USERS_FILE.getFileName() + ")");
             status.put("registeredUsers", userDatabase.size());
+            status.put("timestamp", Instant.now().toString());
             sendJsonResponse(exchange, 200, status);
         }
     }

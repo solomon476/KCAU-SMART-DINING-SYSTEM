@@ -10,6 +10,7 @@ An online cafeteria ordering and dining management system built specifically for
   - Built using Java's built-in `com.sun.net.httpserver.HttpServer`
   - High-concurrency virtual threading via `Executors.newVirtualThreadPerTaskExecutor()`
   - Cryptographic security: **PBKDF2WithHmacSHA256** password hashing and **HMAC-SHA256 JWT** authentication
+  - Persistent Storage: **Built-in JSON Database (`data/users.json`)** for permanent account storage across server reboots
   - OOP Domain Models in [`src/main/java/com/kcau/dining/model/`](src/main/java/com/kcau/dining/model/) (`MenuItem.java`, `Order.java`, `User.java`)
 - **Frontend**: **HTML5, Modern Vanilla CSS, JavaScript**
   - Responsive layout optimized for mobile screens, tablets, and desktop/laptop displays
@@ -68,7 +69,9 @@ http://localhost:3000
 
 ```
 .
-├── Server.java                 # Standalone Java HTTP Backend Server
+├── Server.java                 # Standalone Java HTTP Backend Server with Persistent DB
+├── data/
+│   └── users.json              # Persistent JSON Database for registered user accounts
 ├── run-java.sh                 # Shell launcher script for Java backend
 ├── package.json                # Project manifest configured with Java run scripts
 ├── vercel.json                 # Static frontend deployment configuration
@@ -91,12 +94,14 @@ http://localhost:3000
 
 ---
 
-## 🔐 Demo Credentials
+## 🔐 User Authentication & Persistent Database
 
-To test the system immediately without signing up:
-- **Student ID**: `KCA/1234/23`
-- **Password**: `password123`
-- Alternatively, click the **🚀 Quick Preview Full App** button on the sign-in screen.
+The system features real account registration, login verification, and secure password hashing:
+- **Create Account**: Click **Create Account** to register with Full Name, Student ID, and Password. Accounts are permanently saved to `data/users.json`.
+- **Sign In**: Log in using your registered Student ID and Password.
+- **Initial Test Account**:
+  - **Student ID**: `KCA/1234/23`
+  - **Password**: `password123`
 
 ---
 
