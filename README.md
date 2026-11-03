@@ -1,111 +1,212 @@
 # KCAU SMART DINING SYSTEM 🍽️
+### Continuous Assessment Test 1 (CAT 1) — Comprehensive Technical Deliverable
 
-An online cafeteria ordering and dining management system built specifically for KCA University (KCAU). The platform provides student meal discovery, cart management, checkout with simulated M-Pesa STK push, instant digital receipt generation, and authentication powered by a native **Java backend**.
-
----
-
-## 🛠️ Technology Stack
-
-- **Backend**: **Java (Java SE 17+, `Server.java`)**
-  - Built using Java's built-in `com.sun.net.httpserver.HttpServer`
-  - High-concurrency virtual threading via `Executors.newVirtualThreadPerTaskExecutor()`
-  - Cryptographic security: **PBKDF2WithHmacSHA256** password hashing and **HMAC-SHA256 JWT** authentication
-  - Persistent Storage: **Built-in JSON Database (`data/users.json`)** for permanent account storage across server reboots
-  - OOP Domain Models in [`src/main/java/com/kcau/dining/model/`](src/main/java/com/kcau/dining/model/) (`MenuItem.java`, `Order.java`, `User.java`)
-- **Frontend**: **HTML5, Modern Vanilla CSS, JavaScript**
-  - Responsive layout optimized for mobile screens, tablets, and desktop/laptop displays
-  - Interactive sliding cart dock, food category filters, live dish search
-  - Modal checkout flows with M-Pesa, Airtel Money, Card, and Counter pay
-  - In-app notification toast alerts
+An enterprise-grade campus cafeteria online ordering and dining management platform engineered for **KCA University (KCAU)**. Built on a modular **Java backend (OpenJDK 25 with Project Loom Virtual Threads)** and backed by a persistent **SQLite relational database (`data/dining.db`)**, the system connects three dedicated portals: **Student Ordering Portal**, **Dining Staff Kitchen Display System**, and **Administrator Governance Portal**.
 
 ---
 
-## 🚀 Getting Started
+## 🌟 Live Deployments & Repository Links
 
-### Prerequisites
+* **GitHub Repository:** [https://github.com/solomon476/KCAU-SMART-DINING-SYSTEM](https://github.com/solomon476/KCAU-SMART-DINING-SYSTEM)
+* **Vercel Production Deployment:** [https://kca-cafeteria.vercel.app](https://kca-cafeteria.vercel.app)
+* **Technical Documentation PDF:** [KCAU_Smart_Dining_System_CAT1_Technical_Documentation.pdf](KCAU_Smart_Dining_System_CAT1_Technical_Documentation.pdf)
+* **Testing Evidence:** [TESTING_EVIDENCE.md](TESTING_EVIDENCE.md)
 
-- **Java Development Kit (JDK) 17 or higher** (JDK 17, 21, or 25 recommended)
+---
 
-### Running the Java Backend
+## 📸 Screenshots of Application Functions
 
-You can run the server directly using any of the following methods:
+| 1. Authentication & Role Selector | 2. Student Menu & Live Cart Dock |
+| :---: | :---: |
+| ![Login Portal](screenshots/01_login_portal.png) | ![Student Menu](screenshots/02_student_menu.png) |
+| *Multi-role login with ⚡ Quick Sign-In chips* | *Dynamic menu from Java with category filters & tray* |
 
-#### Method 1: Direct Java Execution (Recommended)
-```bash
-java Server.java
+| 3. Kitchen Display System (Staff Portal) | 4. Administrator Governance Portal |
+| :---: | :---: |
+| ![Kitchen KDS](screenshots/03_kitchen_kds.png) | ![Admin Portal](screenshots/04_admin_portal.png) |
+| *Live queue with PREPARING & READY status buttons* | *Real-time sales KPIs, dish rankings, and catalog toggle* |
+
+---
+
+## 🏛️ System Architecture
+
 ```
-
-#### Method 2: Shell Script
-```bash
-chmod +x run-java.sh
-./run-java.sh
-```
-
-#### Method 3: npm Scripts
-```bash
-npm start
-```
-
-Once started, open your browser and navigate to:
-```
-http://localhost:3000
++-------------------------------------------------------------------------------------------------------+
+|                                    THREE CONNECTED USER INTERFACES                                    |
+|   1. STUDENT PORTAL           : Browse Menu from Java, Tray Cart, Simulated M-Pesa STK, Receipt & Track |
+|   2. DINING STAFF PORTAL      : Live Kitchen Queue, Status Controls (PREPARING, READY, COLLECTED), Ledger|
+|   3. ADMINISTRATOR PORTAL     : Real-time Sales KPIs, Meal Availability Toggle, Add Dish, Role Control  |
++-------------------------------------------------------------------------------------------------------+
+                                                   |
+                                     REST JSON APIs over HTTP (Port 3000)
+                                                   v
++-------------------------------------------------------------------------------------------------------+
+|                                  MODULAR JAVA APPLICATION ENGINE                                      |
+|   - com.kcau.dining.Server    : Virtual Thread HTTP Server (com.sun.net.httpserver)                   |
+|   - com.kcau.dining.handler.* : UserHandler, MenuHandler, OrderHandler, PaymentHandler, ReportHandler |
+|   - com.kcau.dining.service.* : UserService, MenuService, OrderService, PaymentService, ReportService |
+|   - com.kcau.dining.model.*   : User, MenuItem, Order, OrderItem, Payment                             |
++-------------------------------------------------------------------------------------------------------+
+                                                   |
+                                            JDBC Connectivity
+                                                   v
++-------------------------------------------------------------------------------------------------------+
+|                                    RELATIONAL SQLITE DATABASE                                         |
+|   - data/dining.db            : Foreign-keyed tables (users, menu_items, orders, order_items, payments) |
+|   - DatabaseInitializer.java  : Automated DDL table creation and initial seed data                    |
++-------------------------------------------------------------------------------------------------------+
 ```
 
 ---
 
-## 📡 Backend REST API Endpoints
-
-| Method | Endpoint | Description |
-|---|---|---|
-| `POST` | `/api/signup` | Register a new student/staff account with PBKDF2 hashed password |
-| `POST` | `/api/login` | Authenticate user credentials and return a signed HMAC-SHA256 JWT |
-| `GET` | `/api/me` | Fetch authenticated user profile using Bearer JWT token |
-| `GET` | `/api/status` | Backend health check verifying the Java HTTP service status |
-| `GET` | `/*` | Static file server and SPA routing for the client interface |
-
----
-
-## 📁 Repository Structure
+## 📁 Complete Java Source Code Organization
 
 ```
 .
-├── Server.java                 # Standalone Java HTTP Backend Server with Persistent DB
+├── Server.java                        # Root server launcher (auto-delegating to modular engine)
+├── User.java                          # Root-level model alias for User
+├── MenuItem.java                      # Root-level model alias for MenuItem
+├── Order.java                         # Root-level model alias for Order
+├── run-java.sh                        # Shell script to start the Java backend
+├── package.json                       # Scripts for npm start
+├── lib/                               # Bundled JDBC & logging libraries (Zero external install required)
+│   ├── sqlite-jdbc.jar                # Native SQLite JDBC driver
+│   ├── slf4j-api.jar                  # Logging interface
+│   └── slf4j-simple.jar              # Simple SLF4J binding
 ├── data/
-│   └── users.json              # Persistent JSON Database for registered user accounts
-├── run-java.sh                 # Shell launcher script for Java backend
-├── package.json                # Project manifest configured with Java run scripts
-├── vercel.json                 # Static frontend deployment configuration
-├── src/
-│   └── main/
-│       └── java/
-│           └── com/
-│               └── kcau/
-│                   └── dining/
-│                       └── model/
-│                           ├── MenuItem.java   # Food and menu item model
-│                           ├── Order.java      # Order item and receipt model
-│                           └── User.java       # User entity model
-└── public/                     # Frontend client assets
-    ├── index.html              # Modern cafeteria web application
-    ├── style.css               # Responsive design system
-    ├── app.js                  # Frontend interactions & API communication
-    └── images/                 # Cafeteria menu images
+│   └── dining.db                      # Persistent SQLite relational database
+├── src/main/java/com/kcau/dining/     # Modular Java enterprise architecture
+│   ├── Server.java                    # Core HTTP server with REST routing & Virtual Threads
+│   ├── database/
+│   │   ├── DatabaseConnection.java    # Thread-safe SQLite connection pool manager
+│   │   └── DatabaseInitializer.java   # Automated table creation (DDL) and seed injector
+│   ├── model/
+│   │   ├── User.java                  # User account entity (roles: student, staff, admin)
+│   │   ├── MenuItem.java              # Food catalog entity (price, category, availability)
+│   │   ├── Order.java                 # Master order ticket with status lifecycle
+│   │   ├── OrderItem.java             # Order line item with quantity & unit price
+│   │   └── Payment.java               # Transaction ledger entity
+│   ├── service/
+│   │   ├── UserService.java           # PBKDF2 password hashing & authentication
+│   │   ├── MenuService.java           # Food catalog management & availability toggle
+│   │   ├── OrderService.java          # ACID transactional order creation & status updates
+│   │   ├── PaymentService.java        # Payment ledger recording & queries
+│   │   └── ReportService.java         # SQL aggregate calculations (revenue, popularity)
+│   └── handler/
+│       ├── HttpHelper.java            # CORS, JSON serialization, HMAC-SHA256 JWT tokens
+│       ├── UserHandler.java           # /api/signup, /api/login, /api/me, /api/users, /api/users/role
+│       ├── MenuHandler.java           # /api/menu, /api/menu/availability, /api/menu/edit
+│       ├── OrderHandler.java          # /api/orders, /api/orders/my, /api/orders/status
+│       ├── PaymentHandler.java        # /api/payments
+│       └── ReportHandler.java         # /api/reports/summary, /api/reports/sales
+├── public/                            # Single Page Application assets
+│   ├── index.html                     # Responsive SPA interface with all 3 portals
+│   ├── style.css                      # University terracotta design system
+│   ├── app.js                         # Frontend controller communicating with Java REST API
+│   └── images/                        # Cafeteria menu photographs
+├── screenshots/                       # Application functional screenshots
+├── docs/                              # Technical documentation source
+└── TESTING_EVIDENCE.md                # Comprehensive functional test case logs
 ```
 
 ---
 
-## 🔐 User Authentication & Persistent Database
+## 🗄️ Database & Schema Configuration
 
-The system features real account registration, login verification, and secure password hashing:
-- **Create Account**: Click **Create Account** to register with Full Name, Student ID, and Password. Accounts are permanently saved to `data/users.json`.
-- **Sign In**: Log in using your registered Student ID and Password.
-- **Initial Test Account**:
-  - **Student ID**: `KCA/1234/23`
-  - **Password**: `password123`
+The application uses **SQLite (`data/dining.db`)** configured with 5 relational tables:
+
+1. **`users`**: `id` (PK), `name`, `student_id` (UNIQUE), `password_hash`, `role` (`student`, `staff`, `admin`), `created_at`.
+2. **`menu_items`**: `id` (PK), `name`, `category`, `price`, `description`, `image`, `available` (BOOLEAN).
+3. **`orders`**: `order_id` (PK), `user_id` (FK), `customer_name`, `total_amount`, `order_status` (`PENDING`, `PREPARING`, `READY`, `COLLECTED`, `CANCELLED`), `created_at`.
+4. **`order_items`**: `id` (PK), `order_id` (FK), `food_id`, `food_name`, `quantity`, `unit_price`.
+5. **`payments`**: `payment_id` (PK), `order_id` (FK), `method`, `amount`, `reference` (UNIQUE), `status`, `created_at`.
+
+---
+
+## 🚀 How to Run the Application
+
+### Prerequisites
+* Java Development Kit (JDK 17, 21, or 25).
+* Git.
+
+### Step 1: Clone the Repository
+```bash
+git clone https://github.com/solomon476/KCAU-SMART-DINING-SYSTEM.git
+cd KCAU-SMART-DINING-SYSTEM
+```
+
+### Step 2: Launch the Java Backend
+You can use any of the following equivalent methods:
+
+```bash
+# Method A: Using the shell script (Recommended)
+bash run-java.sh
+
+# Method B: Using npm script
+npm start
+
+# Method C: Direct Java execution with bundled libraries
+java -cp "lib/*:src/main/java" src/main/java/com/kcau/dining/Server.java
+
+# Method D: Direct root launcher execution
+java Server.java
+```
+
+### Step 3: Open in Browser
+Visit **`http://localhost:3000/`** to access the system.
+
+---
+
+## 👥 Default Test Accounts (CAT 1 Demo Accounts)
+
+Use the **⚡ Quick Sign-In chips** on the login screen to sign in with one click:
+
+| Role | Student / Staff ID | Password | Portal Features Accessible |
+| :--- | :--- | :--- | :--- |
+| 🎓 **Student** | `KCA/1234/23` | `password123` | Dynamic menu, live tray cart, simulated M-Pesa STK checkout, digital receipt, active order tracking banner |
+| 👨‍🍳 **Dining Staff** | `STAFF/001` | `password123` | Kitchen Display System with live orders queue, status buttons (`PREPARING`, `READY`, `COLLECTED`), payment ledger |
+| 🛡️ **Administrator** | `ADMIN/001` | `password123` | Real-time sales KPIs, dish popularity rankings, toggle meal availability, add new dishes, user role assignment |
+
+---
+
+## 📡 REST API Reference
+
+| HTTP Method | Endpoint | Request Body | Description |
+| :--- | :--- | :--- | :--- |
+| `POST` | `/api/signup` | `{ name, studentId, password, role }` | Register new user in SQLite with PBKDF2 password hashing |
+| `POST` | `/api/login` | `{ studentId, password }` | Authenticate and issue signed HMAC-SHA256 JWT |
+| `GET` | `/api/me` | *Bearer Token Header* | Validate active JWT session |
+| `GET` | `/api/users` | *None* | List all registered accounts (Admin only) |
+| `PUT` | `/api/users/role` | `{ userId, role }` | Change user role to student, staff, or admin |
+| `GET` | `/api/menu` | *Optional ?category=* | Retrieve complete food catalog with availability flags |
+| `POST` | `/api/menu` | `{ name, category, price, desc, image }` | Add a new dish to the cafeteria catalog |
+| `PUT` | `/api/menu/availability`| `{ foodId, available: boolean }` | Toggle dish availability between In Stock and Sold Out |
+| `POST` | `/api/orders` | `{ userId, customerName, total, items }` | Transactional ACID creation of order and line items |
+| `GET` | `/api/orders` | *None* | Retrieve all orders for kitchen display queue |
+| `PUT` | `/api/orders/status` | `{ orderId, status }` | Update order lifecycle status |
+| `POST` | `/api/payments` | `{ orderId, method, amount, ref, status }`| Record transaction in cafeteria payment ledger |
+| `GET` | `/api/payments` | *None* | List all payment records |
+| `GET` | `/api/reports/summary`| *None* | Calculate real-time revenue and order counts |
+| `GET` | `/api/reports/sales` | *None* | Ranking of dishes by quantity sold and revenue |
+
+---
+
+## 🧪 Testing Evidence
+
+All test cases, curl commands, database verification queries, and outputs are documented in:
+👉 [TESTING_EVIDENCE.md](TESTING_EVIDENCE.md)
+
+---
+
+## 📄 Documentation Deliverable
+
+A 5-page publication-quality technical code guide has been generated:
+* View in repository: [KCAU_Smart_Dining_System_CAT1_Technical_Documentation.pdf](KCAU_Smart_Dining_System_CAT1_Technical_Documentation.pdf)
+* HTML source: [docs/code_guide.html](docs/code_guide.html)
 
 ---
 
 ## 👤 Author
 
-- **Solomon** — [GitHub Profile](https://github.com/solomon476)
-- Repository: [KCAU-SMART-DINING-SYSTEM](https://github.com/solomon476/KCAU-SMART-DINING-SYSTEM)
+* **Solomon** — [solomon476](https://github.com/solomon476)
+* KCA University Smart Dining System — CAT 1 Submission
