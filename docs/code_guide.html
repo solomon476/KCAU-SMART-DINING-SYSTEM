@@ -2,11 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>KCAU Smart Dining System - Technical Code Documentation</title>
+    <title>KCAU Smart Dining System - CAT 1 Technical Documentation</title>
     <style>
         @page {
             size: A4;
-            margin: 1.6cm 1.5cm;
+            margin: 1.5cm 1.4cm;
             @bottom-right {
                 content: "Page " counter(page) " of " counter(pages);
                 font-size: 8pt;
@@ -14,7 +14,7 @@
                 color: #64748B;
             }
             @bottom-left {
-                content: "KCAU Smart Dining System • Architecture & Code Documentation";
+                content: "KCAU Smart Dining System • CAT 1 Technical Code Guide";
                 font-size: 8pt;
                 font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
                 color: #64748B;
@@ -24,18 +24,17 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             color: #1E293B;
-            line-height: 1.5;
-            font-size: 9pt;
+            line-height: 1.45;
+            font-size: 8.8pt;
             background: #FFFFFF;
             margin: 0;
             padding: 0;
         }
 
-        /* Cover Header */
         .header-banner {
             border-bottom: 3px solid #EA580C;
-            padding-bottom: 1rem;
-            margin-bottom: 1.4rem;
+            padding-bottom: 0.8rem;
+            margin-bottom: 1.2rem;
         }
         .header-badge {
             display: inline-block;
@@ -47,34 +46,34 @@
             border-radius: 9999px;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            margin-bottom: 0.4rem;
+            margin-bottom: 0.35rem;
         }
         h1 {
-            font-size: 20pt;
+            font-size: 19pt;
             font-weight: 800;
             color: #0F172A;
             margin: 0 0 0.25rem 0;
             letter-spacing: -0.02em;
         }
         .subtitle {
-            font-size: 10pt;
+            font-size: 9.5pt;
             color: #64748B;
-            margin: 0 0 0.8rem 0;
+            margin: 0 0 0.75rem 0;
         }
         .meta-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 0.6rem;
+            gap: 0.5rem;
             background: #F8FAFC;
             border: 1px solid #E2E8F0;
             border-radius: 6px;
             padding: 0.5rem 0.75rem;
-            font-size: 8pt;
+            font-size: 7.8pt;
         }
         .meta-item strong {
             display: block;
             color: #0F172A;
-            font-size: 7pt;
+            font-size: 6.8pt;
             text-transform: uppercase;
             letter-spacing: 0.04em;
         }
@@ -82,14 +81,13 @@
             color: #475569;
         }
 
-        /* Headings */
         h2 {
-            font-size: 12pt;
+            font-size: 11.5pt;
             color: #0F172A;
             border-bottom: 1.5px solid #E2E8F0;
-            padding-bottom: 0.25rem;
-            margin-top: 1.4rem;
-            margin-bottom: 0.6rem;
+            padding-bottom: 0.2rem;
+            margin-top: 1.2rem;
+            margin-bottom: 0.5rem;
             page-break-after: avoid;
             display: flex;
             align-items: center;
@@ -101,68 +99,66 @@
         h2::before {
             content: "";
             display: inline-block;
-            width: 7px;
-            height: 13px;
+            width: 6px;
+            height: 12px;
             background: #EA580C;
             border-radius: 2px;
         }
         h3 {
-            font-size: 10pt;
+            font-size: 9.5pt;
             color: #1E293B;
-            margin-top: 1rem;
-            margin-bottom: 0.35rem;
+            margin-top: 0.85rem;
+            margin-bottom: 0.3rem;
             page-break-after: avoid;
         }
 
         p {
-            margin: 0 0 0.6rem 0;
+            margin: 0 0 0.5rem 0;
             color: #334155;
         }
 
         ul {
-            margin: 0 0 0.6rem 0;
-            padding-left: 1.2rem;
+            margin: 0 0 0.5rem 0;
+            padding-left: 1.1rem;
             color: #334155;
         }
         li {
-            margin-bottom: 0.3rem;
+            margin-bottom: 0.25rem;
         }
 
-        /* Diagrams & Callouts */
         .architecture-box {
             background: #0F172A;
             color: #F8FAFC;
             font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
-            font-size: 7.5pt;
-            line-height: 1.35;
-            padding: 0.8rem 1rem;
+            font-size: 7pt;
+            line-height: 1.3;
+            padding: 0.75rem 0.9rem;
             border-radius: 6px;
-            margin: 0.6rem 0;
+            margin: 0.5rem 0;
             white-space: pre;
         }
 
         .callout {
             border-left: 3px solid #EA580C;
             background: #FFF7ED;
-            padding: 0.55rem 0.85rem;
+            padding: 0.5rem 0.75rem;
             border-radius: 0 6px 6px 0;
-            margin: 0.6rem 0;
-            font-size: 8.5pt;
+            margin: 0.5rem 0;
+            font-size: 8.2pt;
         }
         .callout strong {
             color: #9A3412;
         }
 
-        /* Tables */
         table {
             width: 100%;
             border-collapse: collapse;
-            margin: 0.6rem 0;
-            font-size: 8pt;
+            margin: 0.5rem 0;
+            font-size: 7.8pt;
         }
         th, td {
             border: 1px solid #E2E8F0;
-            padding: 0.4rem 0.55rem;
+            padding: 0.35rem 0.5rem;
             text-align: left;
         }
         th {
@@ -174,22 +170,21 @@
             background: #F8FAFC;
         }
 
-        /* Code snippets */
         pre {
             background: #F8FAFC;
             border: 1px solid #E2E8F0;
-            border-radius: 6px;
-            padding: 0.5rem 0.7rem;
+            border-radius: 5px;
+            padding: 0.45rem 0.65rem;
             font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
-            font-size: 7.5pt;
-            line-height: 1.4;
+            font-size: 7.2pt;
+            line-height: 1.35;
             color: #0F172A;
-            margin: 0.5rem 0;
+            margin: 0.4rem 0;
             page-break-inside: avoid;
         }
         code {
             font-family: 'SFMono-Regular', Consolas, monospace;
-            font-size: 8pt;
+            font-size: 7.8pt;
             background: #F1F5F9;
             color: #C2410C;
             padding: 0.1rem 0.2rem;
@@ -199,26 +194,37 @@
         .feature-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 0.6rem;
-            margin: 0.6rem 0;
+            gap: 0.5rem;
+            margin: 0.5rem 0;
         }
         .feature-card {
             border: 1px solid #E2E8F0;
             border-radius: 6px;
-            padding: 0.55rem 0.75rem;
+            padding: 0.5rem 0.65rem;
             background: #FFFFFF;
         }
         .feature-card h4 {
-            margin: 0 0 0.25rem 0;
+            margin: 0 0 0.2rem 0;
             color: #0F172A;
-            font-size: 8.5pt;
+            font-size: 8.2pt;
             font-weight: 700;
         }
         .feature-card p {
             margin: 0;
-            font-size: 7.8pt;
+            font-size: 7.4pt;
             color: #64748B;
         }
+
+        .badge-pill {
+            display: inline-block;
+            padding: 1px 6px;
+            border-radius: 9999px;
+            font-size: 7pt;
+            font-weight: 700;
+        }
+        .badge-student { background: #EEF2FF; color: #4338CA; }
+        .badge-staff { background: #FEF3C7; color: #B45309; }
+        .badge-admin { background: #FEE2E2; color: #B91C1C; }
 
         .page-break {
             page-break-before: always;
@@ -229,9 +235,9 @@
 
     <!-- ========================================== PAGE 1 ========================================== -->
     <div class="header-banner">
-        <span class="header-badge">Architecture & Code Documentation</span>
+        <span class="header-badge">CAT 1 Technical Documentation</span>
         <h1>KCAU Smart Dining System</h1>
-        <p class="subtitle">Complete technical walkthrough of backend services, persistent database, frontend reactive state, and deployment architecture.</p>
+        <p class="subtitle">Complete technical guide covering modular Java backend architecture, SQLite relational persistence, three connected user interfaces, and Vercel edge deployment.</p>
         
         <div class="meta-grid">
             <div class="meta-item">
@@ -239,169 +245,180 @@
                 <span>KCA University (KCAU)</span>
             </div>
             <div class="meta-item">
-                <strong>Lead Author</strong>
-                <span>Solomon (solomon476)</span>
+                <strong>Author / Repository</strong>
+                <span>solomon476 / KCAU-SMART-DINING-SYSTEM</span>
             </div>
             <div class="meta-item">
                 <strong>Backend Engine</strong>
-                <span>Java 17+ (Virtual Threads)</span>
+                <span>Java 25 (Virtual Threads)</span>
             </div>
             <div class="meta-item">
-                <strong>Database & Host</strong>
-                <span>JSON Engine / Vercel Edge</span>
+                <strong>Database &amp; Host</strong>
+                <span>SQLite (data/dining.db) &amp; Vercel</span>
             </div>
         </div>
     </div>
 
-    <h2>1. System Architecture Overview</h2>
+    <h2>1. System Architecture &amp; CAT 1 Design</h2>
     <p>
-        The <strong>KCAU Smart Dining System</strong> is engineered as a decoupled, full-stack campus dining platform. It handles student meal discovery, online ordering, simulated M-Pesa STK push mobile payments, digital receipts, and live kitchen order display queues.
+        The <strong>KCAU Smart Dining System</strong> is engineered according to Continuous Assessment Test 1 (CAT 1) requirements. It transitions client-only logic to a high-performance, modular Java backend that connects directly to a persistent SQLite relational database while delivering three interconnected portal experiences.
     </p>
 
     <div class="architecture-box">
-+-----------------------------------------------------------------------------------+
-|                              CLIENT TIER (Frontend)                               |
-|  - public/index.html : Modern responsive SPA (Login, Signup, Menu, Kitchen, Cart) |
-|  - public/app.js     : Reactive state, search, cart, dual-layer DB fallback       |
-|  - public/style.css  : University terracotta branding, glassmorphism, responsive  |
-+-----------------------------------------------------------------------------------+
-                                          |
-                               HTTP REST APIs & Static Assets
-                                          v
-+-----------------------------------------------------------------------------------+
-|                        JAVA BACKEND SERVER (Server.java)                          |
-|  - Native com.sun.net.httpserver.HttpServer (Zero external dependencies)          |
-|  - Virtual Thread Per-Task Executor (Project Loom high-concurrency model)         |
-|  - Cryptographic Security: PBKDF2WithHmacSHA256 (Password Salt/Hash) + HMAC JWT   |
-+-----------------------------------------------------------------------------------+
-                                          |
-                                   Direct Disk I/O
-                                          v
-+-----------------------------------------------------------------------------------+
-|                             PERSISTENT STORAGE TIER                               |
-|  - Local/Production Database : data/users.json (Atomic temp-file swap)            |
-|  - Edge/Vercel Database      : localStorage["kca_dining_users_db"] (LocalDB)      |
-+-----------------------------------------------------------------------------------+
++-------------------------------------------------------------------------------------------------------+
+|                                    THREE CONNECTED USER INTERFACES                                    |
+|   1. STUDENT PORTAL           : Browse Menu from Java, Tray Cart, Simulated M-Pesa STK, Receipt & Track |
+|   2. DINING STAFF PORTAL      : Live Kitchen Queue, Status Controls (PREPARING, READY, COLLECTED), Ledger|
+|   3. ADMINISTRATOR PORTAL     : Real-time Sales KPIs, Meal Availability Toggle, Add Dish, Role Control  |
++-------------------------------------------------------------------------------------------------------+
+                                                   |
+                                     REST JSON APIs over HTTP (Port 3000)
+                                                   v
++-------------------------------------------------------------------------------------------------------+
+|                                  MODULAR JAVA APPLICATION ENGINE                                      |
+|   - com.kcau.dining.Server    : Virtual Thread HTTP Server (com.sun.net.httpserver)                   |
+|   - com.kcau.dining.handler.* : UserHandler, MenuHandler, OrderHandler, PaymentHandler, ReportHandler |
+|   - com.kcau.dining.service.* : UserService, MenuService, OrderService, PaymentService, ReportService |
+|   - com.kcau.dining.model.*   : User, MenuItem, Order, OrderItem, Payment                             |
++-------------------------------------------------------------------------------------------------------+
+                                                   |
+                                            JDBC Connectivity
+                                                   v
++-------------------------------------------------------------------------------------------------------+
+|                                    RELATIONAL SQLITE DATABASE                                         |
+|   - data/dining.db            : Foreign-keyed tables (users, menu_items, orders, order_items, payments) |
+|   - DatabaseInitializer.java  : Automated DDL table creation and initial seed data                    |
++-------------------------------------------------------------------------------------------------------+
     </div>
 
     <div class="callout">
-        <strong>Dual Deployment Model:</strong> When executed locally, the app runs on <code>Server.java</code> on <code>http://localhost:3000</code> with native file persistence. When deployed to <strong>Vercel</strong>, the static bundle uses the resilient <code>LocalDB</code> client-side database so accounts and sessions work reliably in both environments.
+        <strong>Dual Deployment Model:</strong> When executed locally, the application runs on the modular Java backend with SQLite persistence on <code>http://localhost:3000</code>. When deployed to <strong>Vercel</strong> (<code>https://kca-cafeteria.vercel.app</code>), the frontend leverages the resilient client-side <code>LocalDB</code> layer so the interactive demo works seamlessly in serverless edge environments.
     </div>
 
-    <div class="feature-grid" style="margin-top: 1rem;">
+    <div class="feature-grid">
         <div class="feature-card">
-            <h4>Native Standalone Java</h4>
-            <p>Runs with a single command <code>java Server.java</code> with zero Maven/Gradle build tool dependencies.</p>
+            <h4>Modular Java Architecture</h4>
+            <p>Strictly partitioned into Model, Database, Service, Handler, and Server packages with virtual thread concurrency.</p>
         </div>
         <div class="feature-card">
-            <h4>Cryptographic Security</h4>
-            <p>10,000-iteration PBKDF2 password hashing with 16-byte random salt and HMAC-SHA256 JWT tokens.</p>
+            <h4>ACID Relational Storage</h4>
+            <p>SQLite persistence ensures all accounts, food catalogs, meal tickets, and payment ledger entries survive restarts.</p>
         </div>
         <div class="feature-card">
-            <h4>Permanent JSON Database</h4>
-            <p>All registered accounts are safely committed to <code>data/users.json</code> and reloaded upon restart.</p>
+            <h4>Role-Based Access Control</h4>
+            <p>Three explicit user roles: <span class="badge-pill badge-student">STUDENT</span>, <span class="badge-pill badge-staff">STAFF</span>, and <span class="badge-pill badge-admin">ADMIN</span> with cryptographic JWT authentication.</p>
         </div>
         <div class="feature-card">
-            <h4>Kenyan Fintech Simulation</h4>
-            <p>Interactive Safaricom M-Pesa STK push modal with automatic receipt generation and live queueing.</p>
+            <h4>Dynamic Availability &amp; Analytics</h4>
+            <p>Sold out items toggle dynamically; Java calculates real-time revenue and dish popularity rankings.</p>
         </div>
     </div>
 
     <!-- ========================================== PAGE 2 ========================================== -->
     <div class="page-break"></div>
 
-    <h2 class="section-start">2. Backend Architecture (Server.java)</h2>
+    <h2 class="section-start">2. Relational Database Schema (SQLite)</h2>
     <p>
-        <code>Server.java</code> is a single-file Java backend application utilizing standard Java SE libraries (<code>com.sun.net.httpserver</code>, <code>javax.crypto</code>, <code>java.nio.file</code>).
+        Data persistence is managed via <code>data/dining.db</code> with foreign-key constraints and ACID transaction guarantees. <code>DatabaseInitializer.java</code> automatically validates the schema and seeds default data upon first boot.
     </p>
 
-    <h3>2.1 Lightweight Virtual-Threaded HTTP Server</h3>
-    <pre>// Server initialization with Project Loom Virtual Threads
-HttpServer server = HttpServer.create(new InetSocketAddress(port), 0);
-server.setExecutor(Executors.newVirtualThreadPerTaskExecutor());
-server.start();</pre>
-    <p>
-        Rather than dedicating heavy OS threads to every connection, virtual threads handle high-volume concurrent traffic with negligible RAM consumption, ideal for university rush hours.
-    </p>
-
-    <h3>2.2 Persistent JSON Database Engine (Database Class)</h3>
-    <p>
-        The internal <code>Database</code> class coordinates data persistence in <code>data/users.json</code>:
-    </p>
-    <ul>
-        <li><strong>Automated Initialization (<code>Database.init()</code>):</strong> Ensures the <code>data/</code> folder exists. If <code>users.json</code> is missing, it writes the initial seed student (<code>KCA/1234/23</code>). Otherwise, it parses existing users into an in-memory <code>ConcurrentHashMap</code>.</li>
-        <li><strong>Safe Atomic Writes (<code>Database.saveAllUsers()</code>):</strong> Formats user records into JSON, writes to <code>data/users.tmp</code>, and atomically swaps it with <code>data/users.json</code> (<code>StandardCopyOption.ATOMIC_MOVE</code>). This guarantees zero file corruption even during abrupt server shutdowns.</li>
-        <li><strong>Case-Insensitive Normalization:</strong> Student IDs are normalized using <code>studentId.trim().toUpperCase()</code> so that <code>kca/1234/23</code> and <code>KCA/1234/23</code> match seamlessly.</li>
-    </ul>
-
-    <h3>2.3 Cryptography & Token Engine</h3>
     <table>
         <thead>
             <tr>
-                <th>Component</th>
-                <th>Standard</th>
-                <th>Technical Specification</th>
+                <th>Table Name</th>
+                <th>Columns &amp; Primary/Foreign Keys</th>
+                <th>Description &amp; Role</th>
             </tr>
         </thead>
         <tbody>
             <tr>
-                <td><strong>Password Hash</strong></td>
-                <td><code>PBKDF2WithHmacSHA256</code></td>
-                <td>16-byte random salt, 10,000 iterations, 256-bit key length. Stored format: <code>Base64(salt):Base64(hash)</code>.</td>
+                <td><code>users</code></td>
+                <td>
+                    <code>id</code> (TEXT PK)<br>
+                    <code>name</code> (TEXT), <code>student_id</code> (TEXT UNIQUE)<br>
+                    <code>password_hash</code> (TEXT), <code>role</code> (TEXT)<br>
+                    <code>created_at</code> (TIMESTAMP)
+                </td>
+                <td>Stores registered cafeteria users. The <code>role</code> column classifies accounts into <code>student</code>, <code>staff</code>, or <code>admin</code>. Passwords use PBKDF2 salt/hashing.</td>
             </tr>
             <tr>
-                <td><strong>Token Auth</strong></td>
-                <td><code>HMAC-SHA256 JWT</code></td>
-                <td>Stateless JWT with Header, Payload (<code>id</code>, <code>name</code>, <code>studentId</code>, <code>exp</code>), and signature. Valid for 7 days.</td>
+                <td><code>menu_items</code></td>
+                <td>
+                    <code>id</code> (TEXT PK)<br>
+                    <code>name</code> (TEXT), <code>category</code> (TEXT)<br>
+                    <code>price</code> (REAL), <code>description</code> (TEXT)<br>
+                    <code>image</code> (TEXT), <code>available</code> (INTEGER/BOOLEAN)
+                </td>
+                <td>Master catalog of campus dishes. The <code>available</code> flag (1=In Stock, 0=Sold Out) is controlled by Administrators and dynamically renders on student menus.</td>
             </tr>
             <tr>
-                <td><strong>Verification</strong></td>
-                <td><code>MessageDigest.isEqual()</code></td>
-                <td>Constant-time byte comparison prevents side-channel timing attacks during authentication.</td>
+                <td><code>orders</code></td>
+                <td>
+                    <code>order_id</code> (TEXT PK)<br>
+                    <code>user_id</code> (TEXT FK -&gt; users.id)<br>
+                    <code>customer_name</code> (TEXT)<br>
+                    <code>total_amount</code> (REAL)<br>
+                    <code>order_status</code> (TEXT)<br>
+                    <code>created_at</code> (TIMESTAMP)
+                </td>
+                <td>Kitchen meal tickets. Status progresses through <code>PENDING</code> -&gt; <code>PREPARING</code> -&gt; <code>READY</code> -&gt; <code>COLLECTED</code>. Handled via atomic SQL transactions.</td>
+            </tr>
+            <tr>
+                <td><code>order_items</code></td>
+                <td>
+                    <code>id</code> (INTEGER PK AUTOINCREMENT)<br>
+                    <code>order_id</code> (TEXT FK -&gt; orders.order_id)<br>
+                    <code>food_id</code> (TEXT), <code>food_name</code> (TEXT)<br>
+                    <code>quantity</code> (INTEGER), <code>unit_price</code> (REAL)
+                </td>
+                <td>Line item breakdown for each placed meal ticket. Links dishes ordered, counts, and unit prices for accurate kitchen display and analytics aggregation.</td>
+            </tr>
+            <tr>
+                <td><code>payments</code></td>
+                <td>
+                    <code>payment_id</code> (TEXT PK)<br>
+                    <code>order_id</code> (TEXT FK -&gt; orders.order_id)<br>
+                    <code>method</code> (TEXT), <code>amount</code> (REAL)<br>
+                    <code>reference</code> (TEXT UNIQUE)<br>
+                    <code>status</code> (TEXT), <code>created_at</code> (TIMESTAMP)
+                </td>
+                <td>Cafeteria transaction ledger. Records simulated M-Pesa STK push, Airtel Money, Card, or Counter Cash payments linked directly to order IDs.</td>
             </tr>
         </tbody>
     </table>
 
-    <h3>2.4 Backend REST API Endpoints</h3>
+    <h3>Default CAT 1 Seed Accounts</h3>
     <table>
         <thead>
             <tr>
-                <th>Method</th>
-                <th>Endpoint</th>
-                <th>Request Body</th>
-                <th>Description & Status Code</th>
+                <th>Portal Role</th>
+                <th>Student / Staff ID</th>
+                <th>Full Name</th>
+                <th>Default Password</th>
+                <th>Portal Privileges</th>
             </tr>
         </thead>
         <tbody>
             <tr>
-                <td><code>POST</code></td>
-                <td><code>/api/signup</code></td>
-                <td><code>{ name, studentId, password }</code></td>
-                <td>Registers account, hashes password, saves to <code>data/users.json</code>. Returns <code>201 Created</code>.</td>
+                <td><span class="badge-pill badge-student">STUDENT</span></td>
+                <td><code>KCA/1234/23</code></td>
+                <td>Alex Kiprop</td>
+                <td><code>password123</code></td>
+                <td>Browse menu, cart tray, checkout, view receipt, track live ticket</td>
             </tr>
             <tr>
-                <td><code>POST</code></td>
-                <td><code>/api/login</code></td>
-                <td><code>{ studentId, password }</code></td>
-                <td>Validates credentials, issues signed JWT token, returns user details. Returns <code>200 OK</code>.</td>
+                <td><span class="badge-pill badge-staff">STAFF</span></td>
+                <td><code>STAFF/001</code></td>
+                <td>Chef James Omondi</td>
+                <td><code>password123</code></td>
+                <td>Live kitchen display queue, status buttons, payment ledger</td>
             </tr>
             <tr>
-                <td><code>GET</code></td>
-                <td><code>/api/me</code></td>
-                <td><code>Bearer &lt;token&gt;</code> Header</td>
-                <td>Validates JWT signature & expiry, returns profile for active session. Returns <code>200 OK</code>.</td>
-            </tr>
-            <tr>
-                <td><code>GET</code></td>
-                <td><code>/api/status</code></td>
-                <td><em>None</em></td>
-                <td>System diagnostics: uptime, DB file status, and registered user count. Returns <code>200 OK</code>.</td>
-            </tr>
-            <tr>
-                <td><code>GET</code></td>
-                <td><code>/*</code></td>
-                <td><em>None</em></td>
-                <td>Static file server for <code>public/</code> with SPA fallback to <code>index.html</code>.</td>
+                <td><span class="badge-pill badge-admin">ADMIN</span></td>
+                <td><code>ADMIN/001</code></td>
+                <td>Dr. Jane Muthoni</td>
+                <td><code>password123</code></td>
+                <td>Sales metrics, toggle item availability, add dish, user role control</td>
             </tr>
         </tbody>
     </table>
@@ -409,156 +426,261 @@ server.start();</pre>
     <!-- ========================================== PAGE 3 ========================================== -->
     <div class="page-break"></div>
 
-    <h2 class="section-start">3. Frontend Client Architecture (public/)</h2>
+    <h2 class="section-start">3. Backend Package &amp; Code Architecture</h2>
     <p>
-        The client interface is built with vanilla web technologies (HTML5, CSS3, ES6+ JavaScript), ensuring blazing speed, accessibility, and zero bundling complexity.
+        The backend code is organized under package <code>com.kcau.dining</code> adhering to separation of concerns:
     </p>
 
-    <div class="feature-grid">
-        <div class="feature-card">
-            <h4>public/index.html (Single-Page View Controller)</h4>
-            <p>Manages Sign In, Registration, Cafeteria Menu, Kitchen Display, and Checkout Modals via display toggles without page refreshes.</p>
-        </div>
-        <div class="feature-card">
-            <h4>public/app.js (Reactive Controller)</h4>
-            <p>Handles live dish filtering, shopping cart state, M-Pesa STK push simulation, toast alerts, and dual-layer database fallback.</p>
-        </div>
-        <div class="feature-card">
-            <h4>public/style.css (Design System)</h4>
-            <p>CSS Custom Properties tokens, modern glassmorphism, responsive grid/flexbox layouts, and KCAU burnt orange terracotta branding.</p>
-        </div>
-        <div class="feature-card">
-            <h4>LocalDB (Storage Resilience)</h4>
-            <p>Client-side persistence layer in localStorage ensuring account registration and sign-in work even on static hosts like Vercel.</p>
-        </div>
-    </div>
+    <h3>3.1 Package Organization</h3>
+    <pre>src/main/java/com/kcau/dining/
+├── Server.java                        # Main server launcher with route registry & virtual threads
+├── database/
+│   ├── DatabaseConnection.java        # SQLite JDBC connection pool manager (data/dining.db)
+│   └── DatabaseInitializer.java       # DDL table creation and initial seed data injector
+├── model/
+│   ├── User.java                      # Account entity with studentId, role, and password hash
+│   ├── MenuItem.java                  # Food catalog item with price, category, and availability
+│   ├── Order.java                     # Order master with status lifecycle & line items list
+│   ├── OrderItem.java                 # Individual dish line item with count & unit price
+│   └── Payment.java                   # Transaction entity with payment method, amount, and ref
+├── service/
+│   ├── UserService.java               # Account registration, PBKDF2 authentication, role updates
+│   ├── MenuService.java               # Catalog retrieval, dish addition, availability toggling
+│   ├── OrderService.java              # ACID order creation, status progression, and queries
+│   ├── PaymentService.java            # Payment transaction recording and ledger queries
+│   └── ReportService.java             # SQL aggregate sales summary & item popularity metrics
+└── handler/
+    ├── HttpHelper.java                # CORS, JSON serialization, and HMAC-SHA256 JWT tokens
+    ├── UserHandler.java               # Endpoints: /api/signup, /api/login, /api/me, /api/users
+    ├── MenuHandler.java               # Endpoints: /api/menu, /api/menu/availability, /api/menu/edit
+    ├── OrderHandler.java              # Endpoints: /api/orders, /api/orders/my, /api/orders/status
+    ├── PaymentHandler.java            # Endpoints: /api/payments
+    └── ReportHandler.java             # Endpoints: /api/reports/summary, /api/reports/sales</pre>
 
-    <h3>3.1 Authentication & Sign Out Lifecycle</h3>
+    <h3>3.2 Backend Service Implementation Details</h3>
     <ul>
-        <li><strong>Account Registration:</strong> When a user submits the Sign Up form, <code>app.js</code> calls <code>/api/signup</code>. Upon creation, it syncs with <code>LocalDB</code>, clears input fields, transitions to the Sign In card, and automatically pre-fills the new Student ID.</li>
-        <li><strong>Sign In & Personalization:</strong> Successful authentication stores the JWT in <code>localStorage.getItem('kca_token')</code> and the user's name in <code>localStorage.getItem('kca_user_name')</code>. The header greeting and hero welcome banner instantly update to greet the user by their registered name.</li>
-        <li><strong>Sign Out:</strong> Clicking the <strong>🚪 Sign Out</strong> button in the header removes authentication tokens, resets user state, hides the cafeteria menu, and redirects to the login card with an in-app confirmation toast.</li>
-    </ul>
+        <li>
+            <strong>OrderService (Transactional ACID Order Creation):</strong>
+            <pre>// Atomic Order & OrderItem insertion within a single SQLite transaction
+conn.setAutoCommit(false);
+try (PreparedStatement orderStmt = conn.prepareStatement(insertOrderSql);
+     PreparedStatement itemStmt = conn.prepareStatement(insertItemSql)) {
+    // 1. Insert master order row
+    orderStmt.setString(1, order.getOrderId());
+    orderStmt.setString(2, order.getUserId());
+    orderStmt.setDouble(4, order.getTotalAmount());
+    orderStmt.executeUpdate();
 
-    <h3>3.2 Shopping Cart & M-Pesa Simulation Flow</h3>
-    <div class="architecture-box">
-[ Food Catalog ] ---> [ Add to Cart ] ---> [ Sliding Cart Dock ]
-                                                    |
-                                                    v
-[ Kitchen Live Orders ] <--- [ Digital Receipt ] <--- [ Simulated M-Pesa STK Push ]
-    </div>
-    <ul>
-        <li><strong>Interactive Cart:</strong> Maintains reactive item quantities, subtotal calculations, and animated badge updates.</li>
-        <li><strong>M-Pesa STK Push:</strong> Prompts the student for their phone number (e.g. <code>0712345678</code>), displays simulated payment processing, and verifies the simulated pin authorization.</li>
-        <li><strong>Instant Receipt & Kitchen Sync:</strong> Issues a detailed printable receipt with unique transaction codes and pushes the order to the Kitchen Display System.</li>
-    </ul>
-
-    <h3>3.3 Dual-Layer Database Architecture</h3>
-    <pre>// Resilient Fallback Pattern in app.js
-try {
-    const res = await fetch('/api/login', { ... });
-    if (res.ok) { handleSuccess(await res.json()); return; }
-} catch (netErr) {
-    // If backend is unavailable or running on static Vercel host, fall back to LocalDB
-    const localRes = LocalDB.authenticate(studentId, password);
-    if (localRes.success) { handleSuccess(localRes); return; }
+    // 2. Batch insert individual order items
+    for (OrderItem item : order.getItems()) {
+        itemStmt.setString(1, order.getOrderId());
+        itemStmt.setString(2, item.getFoodName());
+        itemStmt.setInt(3, item.getQuantity());
+        itemStmt.setDouble(4, item.getUnitPrice());
+        itemStmt.addBatch();
+    }
+    itemStmt.executeBatch();
+    conn.commit(); // Fully persisted atomically
 }</pre>
+        </li>
+        <li>
+            <strong>ReportService (SQL Data Aggregation):</strong> Calculates real-time total revenue, order count by status, average ticket value, and dishes ranked by quantity sold:
+            <pre>SELECT oi.food_name, SUM(oi.quantity) AS qty, SUM(oi.quantity * oi.unit_price) AS rev
+FROM order_items oi JOIN orders o ON oi.order_id = o.order_id
+WHERE o.order_status != 'CANCELLED'
+GROUP BY oi.food_name ORDER BY qty DESC;</pre>
+        </li>
+        <li>
+            <strong>MenuService (Dynamic Availability Control):</strong> Toggles dish availability via <code>UPDATE menu_items SET available = ? WHERE id = ?</code>, immediately affecting student menu rendering.
+        </li>
+    </ul>
 
     <!-- ========================================== PAGE 4 ========================================== -->
     <div class="page-break"></div>
 
-    <h2 class="section-start">4. Execution, Deployment & File Reference</h2>
+    <h2 class="section-start">4. REST API Endpoint Reference</h2>
+    <p>
+        All HTTP endpoints exchange standard JSON payloads and support Cross-Origin Resource Sharing (CORS):
+    </p>
 
-    <h3>4.1 Local Full-Stack Execution (Java Backend)</h3>
-    <pre># 1. Clone repository
-git clone https://github.com/solomon476/KCAU-SMART-DINING-SYSTEM.git
-cd KCAU-SMART-DINING-SYSTEM
-
-# 2. Run Java server directly (JDK 17+)
-java Server.java
-# Or via npm script: npm start
-
-# 3. Access in browser: http://localhost:3000</pre>
-
-    <h3>4.2 Cloud Deployment (Vercel Production)</h3>
     <table>
         <thead>
             <tr>
-                <th>Resource</th>
-                <th>URL / Location</th>
-                <th>Status</th>
+                <th>Method</th>
+                <th>URI Endpoint</th>
+                <th>Request Body</th>
+                <th>Functionality &amp; Status</th>
             </tr>
         </thead>
         <tbody>
             <tr>
-                <td><strong>Official Production Alias</strong></td>
-                <td><code>https://kca-cafeteria.vercel.app</code></td>
-                <td>✅ Active / Live</td>
+                <td><code>POST</code></td>
+                <td><code>/api/signup</code></td>
+                <td><code>{ name, studentId, password, role }</code></td>
+                <td>Validates fields, creates user in SQLite with PBKDF2 hash. Returns <code>201 Created</code>.</td>
             </tr>
             <tr>
-                <td><strong>Deployment Domain</strong></td>
-                <td><code>https://kcau-smart-dining-system-7888vh9cc-solian-wolves.vercel.app</code></td>
-                <td>✅ Production Ready</td>
+                <td><code>POST</code></td>
+                <td><code>/api/login</code></td>
+                <td><code>{ studentId, password }</code></td>
+                <td>Authenticates credentials, returns signed JWT token with role. Returns <code>200 OK</code>.</td>
+            </tr>
+            <tr>
+                <td><code>GET</code></td>
+                <td><code>/api/me</code></td>
+                <td><code>Bearer &lt;token&gt;</code> Header</td>
+                <td>Validates active JWT session and returns user identity. Returns <code>200 OK</code>.</td>
+            </tr>
+            <tr>
+                <td><code>GET</code></td>
+                <td><code>/api/users</code></td>
+                <td><em>None (Admin)</em></td>
+                <td>Returns list of all registered accounts and current roles. Returns <code>200 OK</code>.</td>
+            </tr>
+            <tr>
+                <td><code>PUT</code></td>
+                <td><code>/api/users/role</code></td>
+                <td><code>{ userId, role }</code></td>
+                <td>Promotes or updates account role to <code>student</code>, <code>staff</code>, or <code>admin</code>. Returns <code>200 OK</code>.</td>
+            </tr>
+            <tr>
+                <td><code>GET</code></td>
+                <td><code>/api/menu</code></td>
+                <td><em>Optional ?category=...</em></td>
+                <td>Returns complete menu catalog loaded from SQLite with availability flags. Returns <code>200 OK</code>.</td>
+            </tr>
+            <tr>
+                <td><code>POST</code></td>
+                <td><code>/api/menu</code></td>
+                <td><code>{ name, category, price, desc, image }</code></td>
+                <td>Adds a new dish to the cafeteria database. Returns <code>201 Created</code>.</td>
+            </tr>
+            <tr>
+                <td><code>PUT</code></td>
+                <td><code>/api/menu/availability</code></td>
+                <td><code>{ foodId, available: boolean }</code></td>
+                <td>Toggles dish status between In Stock and Sold Out in real time. Returns <code>200 OK</code>.</td>
+            </tr>
+            <tr>
+                <td><code>POST</code></td>
+                <td><code>/api/orders</code></td>
+                <td><code>{ userId, customerName, totalAmount, items }</code></td>
+                <td>Creates order ticket in SQLite with line items in an atomic transaction. Returns <code>201 Created</code>.</td>
+            </tr>
+            <tr>
+                <td><code>GET</code></td>
+                <td><code>/api/orders</code></td>
+                <td><em>None (Staff/Admin)</em></td>
+                <td>Retrieves all kitchen queue orders with item breakdowns. Returns <code>200 OK</code>.</td>
+            </tr>
+            <tr>
+                <td><code>PUT</code></td>
+                <td><code>/api/orders/status</code></td>
+                <td><code>{ orderId, status }</code></td>
+                <td>Transitions order status (<code>PREPARING</code>, <code>READY</code>, <code>COLLECTED</code>). Returns <code>200 OK</code>.</td>
+            </tr>
+            <tr>
+                <td><code>POST</code></td>
+                <td><code>/api/payments</code></td>
+                <td><code>{ orderId, method, amount, reference, status }</code></td>
+                <td>Records simulated payment transaction in payments table. Returns <code>201 Created</code>.</td>
+            </tr>
+            <tr>
+                <td><code>GET</code></td>
+                <td><code>/api/payments</code></td>
+                <td><em>None (Staff/Admin)</em></td>
+                <td>Returns full cafeteria transaction ledger. Returns <code>200 OK</code>.</td>
+            </tr>
+            <tr>
+                <td><code>GET</code></td>
+                <td><code>/api/reports/summary</code></td>
+                <td><em>None (Admin)</em></td>
+                <td>Calculates revenue, order counts by status, and registered user total. Returns <code>200 OK</code>.</td>
+            </tr>
+            <tr>
+                <td><code>GET</code></td>
+                <td><code>/api/reports/sales</code></td>
+                <td><em>None (Admin)</em></td>
+                <td>Returns dishes ranked by servings sold and total revenue earned. Returns <code>200 OK</code>.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- ========================================== PAGE 5 ========================================== -->
+    <div class="page-break"></div>
+
+    <h2 class="section-start">5. Frontend Architecture &amp; Three Connected Interfaces</h2>
+    <p>
+        The frontend is structured as a reactive Single Page Application (SPA) across <code>public/index.html</code>, <code>public/style.css</code>, and <code>public/app.js</code>:
+    </p>
+
+    <h3>5.1 The Three Connected Portals</h3>
+    <ul>
+        <li>
+            <strong>1. Student Portal (<code>#student-menu</code>):</strong>
+            <ul>
+                <li>Dishes loaded dynamically from Java SQLite backend (<code>GET /api/menu</code>).</li>
+                <li>Displays category filter pills (Breakfast, Lunch, Drinks, Fruits) and live search input.</li>
+                <li>Items marked <code>available = false</code> render with a red <strong>SOLD OUT</strong> badge and disabled Add button.</li>
+                <li>Floating Cart Dock tracks quantity and total price.</li>
+                <li>Checkout modal supports simulated M-Pesa STK push, Airtel Money, Card, and Cash at Counter.</li>
+                <li>Digital receipt generates Order ID and reference code.</li>
+                <li>Active Order Tracking banner polls status changes from the kitchen.</li>
+            </ul>
+        </li>
+        <li>
+            <strong>2. Dining Staff Portal (<code>#kitchen-dashboard</code>):</strong>
+            <ul>
+                <li>Live Orders Queue displaying order cards with customer name, items list, and timestamps.</li>
+                <li>Filter pills: All, Pending, Preparing, Ready, Collected.</li>
+                <li>Status progression buttons: <code>Start Preparing 🍳</code> -&gt; <code>Mark Ready 🔔</code> -&gt; <code>Mark Collected ✓</code>.</li>
+                <li>Payment ledger tab displays transaction references and amounts.</li>
+                <li>Auto-polls the Java backend every 4 seconds.</li>
+            </ul>
+        </li>
+        <li>
+            <strong>3. Administrator Portal (<code>#admin-dashboard</code>):</strong>
+            <ul>
+                <li>KPI summary cards: Total Revenue, Total Orders, Active in Kitchen, Registered Users.</li>
+                <li>Tab 1: Sales analytics with top-selling dishes and recent orders.</li>
+                <li>Tab 2: Meal catalog management with live Availability Toggle button and Add Dish modal.</li>
+                <li>Tab 3: User accounts table with role modification dropdown (Student / Staff / Admin).</li>
+            </ul>
+        </li>
+    </ul>
+
+    <h3>5.2 Verification &amp; How to Run</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Execution Target</th>
+                <th>Command / URL</th>
+                <th>Expected Outcome</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Run Java Backend Locally</strong></td>
+                <td><code>bash run-java.sh</code> or <code>npm start</code></td>
+                <td>Starts Java server on port 3000, opens SQLite <code>data/dining.db</code>, seeds initial users and menu.</td>
+            </tr>
+            <tr>
+                <td><strong>Test End-to-End</strong></td>
+                <td><code>http://localhost:3000/</code></td>
+                <td>Test Student, Staff, and Admin flows using the Quick Demo Account chips on the login screen.</td>
             </tr>
             <tr>
                 <td><strong>GitHub Repository</strong></td>
                 <td><code>https://github.com/solomon476/KCAU-SMART-DINING-SYSTEM</code></td>
-                <td>✅ Main Branch Up to Date</td>
+                <td>Complete source code pushed with full Java models, services, database, and public assets.</td>
+            </tr>
+            <tr>
+                <td><strong>Vercel Production Edge</strong></td>
+                <td><code>https://kca-cafeteria.vercel.app</code></td>
+                <td>Live web application deployed with dual-layer fallback resilience.</td>
             </tr>
         </tbody>
     </table>
-
-    <h3>4.3 Codebase File Summary</h3>
-    <table>
-        <thead>
-            <tr>
-                <th>File</th>
-                <th>Type</th>
-                <th>Core Responsibilities</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td><code>Server.java</code></td>
-                <td>Java</td>
-                <td>Standalone HTTP server, virtual threads, PBKDF2 hashing, JWT signing, persistent JSON DB manager.</td>
-            </tr>
-            <tr>
-                <td><code>data/users.json</code></td>
-                <td>JSON</td>
-                <td>Permanent database storage holding user credentials, hashed passwords, UUIDs, and creation dates.</td>
-            </tr>
-            <tr>
-                <td><code>public/index.html</code></td>
-                <td>HTML5</td>
-                <td>Single-page app markup: login card, signup modal, food category pills, cart, kitchen screen, receipts.</td>
-            </tr>
-            <tr>
-                <td><code>public/app.js</code></td>
-                <td>JavaScript</td>
-                <td>Client logic, dual-layer LocalDB fallback, cart manager, M-Pesa STK simulation, live menu search.</td>
-            </tr>
-            <tr>
-                <td><code>public/style.css</code></td>
-                <td>CSS3</td>
-                <td>Design system tokens, custom properties, glassmorphism, responsive grid, and university theme styles.</td>
-            </tr>
-            <tr>
-                <td><code>vercel.json</code></td>
-                <td>JSON</td>
-                <td>Configuration mapping clean static edge routes to <code>public/</code> for global CDN delivery.</td>
-            </tr>
-            <tr>
-                <td><code>README.md</code></td>
-                <td>Markdown</td>
-                <td>Project overview, installation guide, REST API documentation, and architecture description.</td>
-            </tr>
-        </tbody>
-    </table>
-
-    <div class="callout" style="margin-top: 1.5rem; text-align: center;">
-        <strong>KCAU Smart Dining System</strong> • Engineering university cafeteria operations with speed, security, and elegance.
-    </div>
 
 </body>
 </html>
