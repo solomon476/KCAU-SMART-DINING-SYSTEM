@@ -10,6 +10,8 @@ An enterprise-grade campus cafeteria online ordering and dining management platf
 * **GitHub Repository:** [https://github.com/solomon476/KCAU-SMART-DINING-SYSTEM](https://github.com/solomon476/KCAU-SMART-DINING-SYSTEM)
 * **Vercel Production Deployment:** [https://kca-cafeteria.vercel.app](https://kca-cafeteria.vercel.app)
 * **Technical Documentation PDF:** [KCAU_Smart_Dining_System_CAT1_Technical_Documentation.pdf](KCAU_Smart_Dining_System_CAT1_Technical_Documentation.pdf)
+* **Java Source Code PDF:** [KCAU_SMART_DINING_JAVA_SOURCE_CODE.pdf](KCAU_SMART_DINING_JAVA_SOURCE_CODE.pdf)
+* **Java Source Code DOCX:** [KCAU_SMART_DINING_JAVA_SOURCE_CODE.docx](KCAU_SMART_DINING_JAVA_SOURCE_CODE.docx)
 * **Testing Evidence:** [TESTING_EVIDENCE.md](TESTING_EVIDENCE.md)
 
 ---
@@ -198,11 +200,15 @@ All test cases, curl commands, database verification queries, and outputs are do
 
 ---
 
-## 📄 Documentation Deliverable
+## 📄 Documentation Deliverables
 
-A 5-page publication-quality technical code guide has been generated:
-* View in repository: [KCAU_Smart_Dining_System_CAT1_Technical_Documentation.pdf](KCAU_Smart_Dining_System_CAT1_Technical_Documentation.pdf)
-* HTML source: [docs/code_guide.html](docs/code_guide.html)
+1. **CAT 1 Project & Technical Report (PDF):**
+   * [KCAU_Smart_Dining_System_CAT1_Technical_Documentation.pdf](KCAU_Smart_Dining_System_CAT1_Technical_Documentation.pdf)
+   * HTML source: [docs/code_guide.html](docs/code_guide.html)
+2. **Complete Java Source Code Document (PDF & DOCX):**
+   * [KCAU_SMART_DINING_JAVA_SOURCE_CODE.pdf](KCAU_SMART_DINING_JAVA_SOURCE_CODE.pdf) (56 pages, formatted with Consolas monospaced typography, metadata banners, and syntax highlighting)
+   * Word source document: [KCAU_SMART_DINING_JAVA_SOURCE_CODE.docx](KCAU_SMART_DINING_JAVA_SOURCE_CODE.docx)
+   * Generation automation script: [build_java_source_code_doc.py](build_java_source_code_doc.py)
 
 ---
 
