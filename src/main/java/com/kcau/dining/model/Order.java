@@ -5,36 +5,43 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Represents a cafeteria order placed by a student.
+ * Represents an order placed by a student or staff member.
  */
 public class Order {
     private String orderId;
-    private String studentId;
-    private List<OrderItem> items = new ArrayList<>();
+    private String userId;
+    private String customerName;
     private double totalAmount;
-    private String status; // "PENDING", "PREPARING", "READY", "COMPLETED"
+    private String status; // "PENDING", "PREPARING", "READY", "COLLECTED", "CANCELLED"
     private Instant createdAt;
+    private List<OrderItem> items = new ArrayList<>();
 
     public Order() {
-        this.createdAt = Instant.now();
         this.status = "PENDING";
+        this.createdAt = Instant.now();
     }
 
-    public Order(String orderId, String studentId) {
+    public Order(String orderId, String userId, String customerName, double totalAmount, String status, Instant createdAt) {
         this.orderId = orderId;
-        this.studentId = studentId;
-        this.createdAt = Instant.now();
-        this.status = "PENDING";
+        this.userId = userId;
+        this.customerName = customerName;
+        this.totalAmount = totalAmount;
+        this.status = (status != null && !status.isBlank()) ? status : "PENDING";
+        this.createdAt = (createdAt != null) ? createdAt : Instant.now();
     }
 
     public String getOrderId() { return orderId; }
     public void setOrderId(String orderId) { this.orderId = orderId; }
 
-    public String getStudentId() { return studentId; }
-    public void setStudentId(String studentId) { this.studentId = studentId; }
+    public String getUserId() { return userId; }
+    public void setUserId(String userId) { this.userId = userId; }
 
-    public List<OrderItem> getItems() { return items; }
-    public void setItems(List<OrderItem> items) { this.items = items; }
+    // Backward compatibility helper for studentId
+    public String getStudentId() { return userId; }
+    public void setStudentId(String studentId) { this.userId = studentId; }
+
+    public String getCustomerName() { return customerName; }
+    public void setCustomerName(String customerName) { this.customerName = customerName; }
 
     public double getTotalAmount() { return totalAmount; }
     public void setTotalAmount(double totalAmount) { this.totalAmount = totalAmount; }
@@ -45,28 +52,21 @@ public class Order {
     public Instant getCreatedAt() { return createdAt; }
     public void setCreatedAt(Instant createdAt) { this.createdAt = createdAt; }
 
-    public static class OrderItem {
-        private String itemName;
-        private int quantity;
-        private double unitPrice;
+    public List<OrderItem> getItems() { return items; }
+    public void setItems(List<OrderItem> items) { this.items = items; }
 
-        public OrderItem() {}
+    public void addItem(OrderItem item) {
+        this.items.add(item);
+    }
 
-        public OrderItem(String itemName, int quantity, double unitPrice) {
-            this.itemName = itemName;
-            this.quantity = quantity;
-            this.unitPrice = unitPrice;
-        }
-
-        public String getItemName() { return itemName; }
-        public void setItemName(String itemName) { this.itemName = itemName; }
-
-        public int getQuantity() { return quantity; }
-        public void setQuantity(int quantity) { this.quantity = quantity; }
-
-        public double getUnitPrice() { return unitPrice; }
-        public void setUnitPrice(double unitPrice) { this.unitPrice = unitPrice; }
-
-        public double getSubtotal() { return quantity * unitPrice; }
+    @Override
+    public String toString() {
+        return "Order{" +
+                "orderId='" + orderId + '\'' +
+                ", customerName='" + customerName + '\'' +
+                ", totalAmount=" + totalAmount +
+                ", status='" + status + '\'' +
+                ", itemsCount=" + items.size() +
+                '}';
     }
 }

@@ -4,10 +4,10 @@
   "description": "KCAU Smart Dining System - Standalone Java Backend & Modern Web Client",
   "main": "Server.java",
   "scripts": {
-    "start": "java Server.java",
-    "dev": "java Server.java",
-    "java": "java Server.java",
-    "backend": "java Server.java",
+    "start": "bash run-java.sh",
+    "dev": "bash run-java.sh",
+    "java": "java -cp \"lib/*\" src/main/java/com/kcau/dining/Server.java",
+    "backend": "bash run-java.sh",
     "run-java": "bash run-java.sh",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

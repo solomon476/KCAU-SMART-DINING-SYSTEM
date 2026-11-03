@@ -31,6 +31,16 @@
                 </div>
                 <button id="login-btn" class="btn-primary">Sign In to Cafeteria</button>
                 <p class="signup-link">Don't have an account? <a href="#" id="signup-link">Create Account</a></p>
+
+                <!-- Demo Account Quick Selector -->
+                <div class="demo-accounts-box">
+                    <p class="demo-title">⚡ Quick Sign-In (CAT 1 Demo Accounts):</p>
+                    <div class="demo-chip-group">
+                        <button type="button" class="demo-chip" onclick="quickFillLogin('KCA/1234/23', 'password123')">🎓 Student</button>
+                        <button type="button" class="demo-chip" onclick="quickFillLogin('STAFF/001', 'password123')">👨‍🍳 Kitchen Staff</button>
+                        <button type="button" class="demo-chip" onclick="quickFillLogin('ADMIN/001', 'password123')">🛡️ Administrator</button>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -47,8 +57,16 @@
                     <input type="text" id="signup-name" placeholder="e.g. Alex Kiprop" autocomplete="name">
                 </div>
                 <div class="input-group">
-                    <label for="signup-id">Student ID</label>
-                    <input type="text" id="signup-id" placeholder="e.g. KCA/1234/23" autocomplete="username">
+                    <label for="signup-id">Student ID / Staff ID</label>
+                    <input type="text" id="signup-id" placeholder="e.g. KCA/1234/23 or STAFF/002" autocomplete="username">
+                </div>
+                <div class="input-group">
+                    <label for="signup-role">Account Role</label>
+                    <select id="signup-role" class="form-select">
+                        <option value="student" selected>🎓 Student (Order Meals)</option>
+                        <option value="staff">👨‍🍳 Dining Staff (Kitchen Queue)</option>
+                        <option value="admin">🛡️ Administrator (Full Control &amp; Reports)</option>
+                    </select>
                 </div>
                 <div class="input-group">
                     <label for="signup-password">Password</label>
@@ -81,9 +99,18 @@
                     </div>
 
                     <div class="header-actions">
+                        <!-- Portal switch buttons (shown for staff & admin) -->
+                        <div id="student-portal-switcher" class="portal-switcher">
+                            <button class="btn-nav-portal" id="student-to-kitchen-btn" style="display:none;" onclick="showPortal('kitchen')">👨‍🍳 Kitchen</button>
+                            <button class="btn-nav-portal" id="student-to-admin-btn" style="display:none;" onclick="showPortal('admin')">🛡️ Admin</button>
+                        </div>
+
                         <div class="user-badge" id="user-badge-container">
                             <div class="user-avatar">👤</div>
-                            <span id="user-greeting-name">Student</span>
+                            <div class="user-text-info">
+                                <span id="user-greeting-name">Student</span>
+                                <span id="user-role-badge" class="role-badge role-student">STUDENT</span>
+                            </div>
                         </div>
                         <button id="student-signout-btn" class="btn-signout" title="Sign Out of Cafeteria">
                             <span>🚪 Sign Out</span>
@@ -95,6 +122,23 @@
                     </div>
                 </div>
             </header>
+
+            <!-- Student Active Order Live Tracker Banner -->
+            <div id="student-active-order-banner" class="active-order-banner" style="display: none;">
+                <div class="container-max banner-inner">
+                    <div class="active-order-info">
+                        <span class="pulse-indicator"></span>
+                        <div>
+                            <div class="order-id-label">Active Ticket: <strong id="banner-order-id">ORD-000000</strong></div>
+                            <p class="order-status-msg" id="banner-order-msg">Your food is being prepared by the kitchen crew.</p>
+                        </div>
+                    </div>
+                    <div class="active-order-actions">
+                        <span id="banner-order-badge" class="status-badge status-preparing">PREPARING</span>
+                        <button class="btn-refresh-sm" onclick="checkActiveOrderStatus()" title="Refresh Status">🔄 Check Status</button>
+                    </div>
+                </div>
+            </div>
             
             <!-- Hero / Welcome Banner -->
             <section class="welcome-section">
@@ -137,7 +181,7 @@
             <!-- Food Grid -->
             <section class="food-section">
                 <div class="container-max">
-                    <div class="food-grid">
+                    <div class="food-grid" id="food-grid">
                         <!-- Card 1 -->
                         <div class="food-card" data-category="lunch">
                             <div class="card-img-wrapper">
@@ -406,7 +450,7 @@
             </div>
         </div>
 
-        <!-- Screen 3: Kitchen Dashboard -->
+        <!-- Screen 3: Kitchen / Staff Dashboard -->
         <div id="kitchen-dashboard" class="screen" style="display: none;">
             <header class="app-header">
                 <div class="container-max header-inner">
@@ -414,19 +458,270 @@
                         <div class="brand-icon">👨‍🍳</div>
                         <div class="brand-text">
                             <h2>KITCHEN DISPLAY SYSTEM</h2>
-                            <span class="brand-status">Live Orders Queue</span>
+                            <span class="brand-status">Dining Staff Order Hub</span>
                         </div>
                     </div>
-                    <button class="btn-logout" id="logout-btn">← Back to Menu</button>
+
+                    <!-- Kitchen Nav / Sub-view Toggles -->
+                    <div class="header-nav-pills">
+                        <button class="nav-subtab active" id="kitchen-tab-orders" onclick="switchKitchenTab('orders')">🍳 Active Orders</button>
+                        <button class="nav-subtab" id="kitchen-tab-payments" onclick="switchKitchenTab('payments')">💳 Payment Ledger</button>
+                    </div>
+
+                    <div class="header-actions">
+                        <button class="btn-nav-portal" onclick="showPortal('menu')">🍽️ Menu Portal</button>
+                        <button class="btn-nav-portal" id="kitchen-to-admin-btn" style="display:none;" onclick="showPortal('admin')">🛡️ Admin Portal</button>
+                        <button class="btn-signout" onclick="handleSignOut()">🚪 Sign Out</button>
+                    </div>
                 </div>
             </header>
 
-            <div class="container-max">
-                <div id="live-orders-section" class="dashboard-section">
-                    <div id="no-orders-msg" class="no-orders-msg" style="display:none; text-align:center; padding:3rem; grid-column:1/-1;">
-                        <span style="font-size:3rem;">🍽️</span>
-                        <p style="color:var(--text-secondary); margin-top:0.5rem;">No active orders right now.</p>
+            <div class="container-max dashboard-body">
+                <!-- Orders View -->
+                <div id="kitchen-orders-view">
+                    <div class="dashboard-controls-bar">
+                        <div class="filter-pills-group">
+                            <button class="filter-chip active" data-kitchen-filter="ALL" onclick="filterKitchenOrders('ALL', this)">All Orders (<span id="count-all">0</span>)</button>
+                            <button class="filter-chip" data-kitchen-filter="PENDING" onclick="filterKitchenOrders('PENDING', this)">Pending (<span id="count-pending">0</span>)</button>
+                            <button class="filter-chip" data-kitchen-filter="PREPARING" onclick="filterKitchenOrders('PREPARING', this)">Preparing (<span id="count-preparing">0</span>)</button>
+                            <button class="filter-chip" data-kitchen-filter="READY" onclick="filterKitchenOrders('READY', this)">Ready for Pickup (<span id="count-ready">0</span>)</button>
+                            <button class="filter-chip" data-kitchen-filter="COLLECTED" onclick="filterKitchenOrders('COLLECTED', this)">Collected (<span id="count-collected">0</span>)</button>
+                        </div>
+                        <div class="controls-right">
+                            <span class="live-dot" title="Auto-polling every 4 seconds"></span>
+                            <span style="font-size:0.8rem; color:var(--text-secondary); font-weight:600;">Live Feed</span>
+                            <button class="btn-refresh-sm" onclick="fetchKitchenOrders()" title="Refresh Orders Now">🔄 Refresh</button>
+                        </div>
                     </div>
+
+                    <div id="live-orders-section" class="orders-grid">
+                        <div id="no-orders-msg" class="no-orders-msg" style="display:none;">
+                            <span style="font-size:3rem;">🍽️</span>
+                            <p style="color:var(--text-secondary); margin-top:0.5rem;">No active orders in this filter.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payments Ledger View -->
+                <div id="kitchen-payments-view" style="display: none;">
+                    <div class="dashboard-controls-bar">
+                        <h3>Recorded Payments Ledger</h3>
+                        <button class="btn-refresh-sm" onclick="fetchPaymentsLedger()">🔄 Refresh Payments</button>
+                    </div>
+                    <div class="admin-table-container">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Ref / Transaction ID</th>
+                                    <th>Order ID</th>
+                                    <th>Method</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Timestamp</th>
+                                </tr>
+                            </thead>
+                            <tbody id="payments-ledger-tbody">
+                                <tr><td colspan="6" style="text-align:center; padding:2rem; color:var(--text-secondary);">Loading transaction ledger...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Screen 4: Administrator Portal -->
+        <div id="admin-dashboard" class="screen" style="display: none;">
+            <header class="app-header">
+                <div class="container-max header-inner">
+                    <div class="brand-wrapper">
+                        <div class="brand-icon">🛡️</div>
+                        <div class="brand-text">
+                            <h2>ADMINISTRATOR PORTAL</h2>
+                            <span class="brand-status">KCAU Cafeteria Governance</span>
+                        </div>
+                    </div>
+
+                    <!-- Admin Section Nav Pills -->
+                    <div class="header-nav-pills">
+                        <button class="nav-subtab active" id="admin-tab-reports" onclick="switchAdminTab('reports')">📊 Analytics &amp; Sales</button>
+                        <button class="nav-subtab" id="admin-tab-menu" onclick="switchAdminTab('menu')">🍲 Meal Catalog</button>
+                        <button class="nav-subtab" id="admin-tab-users" onclick="switchAdminTab('users')">👥 User Accounts</button>
+                    </div>
+
+                    <div class="header-actions">
+                        <button class="btn-nav-portal" onclick="showPortal('menu')">🍽️ Student Menu</button>
+                        <button class="btn-nav-portal" onclick="showPortal('kitchen')">👨‍🍳 Kitchen Queue</button>
+                        <button class="btn-signout" onclick="handleSignOut()">🚪 Sign Out</button>
+                    </div>
+                </div>
+            </header>
+
+            <div class="container-max dashboard-body">
+                <!-- Top Key Performance Indicators (KPIs) -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: #ECFDF5; color: #059669;">💰</div>
+                        <div class="stat-info">
+                            <h4>Total Sales Revenue</h4>
+                            <div class="stat-value">KES <span id="admin-kpi-revenue">0.00</span></div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: #EFF6FF; color: #2563EB;">🧾</div>
+                        <div class="stat-info">
+                            <h4>Total Orders Placed</h4>
+                            <div class="stat-value"><span id="admin-kpi-orders">0</span></div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: #FFFBEB; color: #D97706;">🍳</div>
+                        <div class="stat-info">
+                            <h4>Active in Kitchen</h4>
+                            <div class="stat-value"><span id="admin-kpi-active">0</span></div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: #F3E8FF; color: #7C3AED;">👥</div>
+                        <div class="stat-info">
+                            <h4>Registered Users</h4>
+                            <div class="stat-value"><span id="admin-kpi-users">0</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Admin Tab 1: Sales & Analytics -->
+                <div id="admin-view-reports" class="admin-view-panel">
+                    <div class="admin-grid-2col">
+                        <div class="admin-table-container">
+                            <div class="admin-table-header">
+                                <h3>🏆 Top Selling Dishes</h3>
+                                <button class="btn-refresh-sm" onclick="fetchAdminReports()">🔄 Refresh</button>
+                            </div>
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>Dish Name</th>
+                                        <th>Units Sold</th>
+                                        <th>Total Revenue</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="admin-popular-items-tbody">
+                                    <tr><td colspan="3" style="text-align:center; padding:1.5rem; color:var(--text-secondary);">Loading popularity analytics...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="admin-table-container">
+                            <div class="admin-table-header">
+                                <h3>📋 Recent Dining Orders</h3>
+                                <button class="btn-refresh-sm" onclick="fetchAdminReports()">🔄 Refresh</button>
+                            </div>
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>Order ID</th>
+                                        <th>Customer</th>
+                                        <th>Total</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="admin-recent-orders-tbody">
+                                    <tr><td colspan="4" style="text-align:center; padding:1.5rem; color:var(--text-secondary);">Loading recent orders...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Admin Tab 2: Meal Catalog Management -->
+                <div id="admin-view-menu" class="admin-view-panel" style="display: none;">
+                    <div class="admin-table-container">
+                        <div class="admin-table-header">
+                            <div>
+                                <h3>🍲 Campus Meal Catalog &amp; Live Availability</h3>
+                                <p style="font-size:0.82rem; color:var(--text-secondary);">Toggle items online or offline in real-time</p>
+                            </div>
+                            <button class="btn-primary-sm" onclick="openAddDishModal()">➕ Add New Dish</button>
+                        </div>
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Dish</th>
+                                    <th>Category</th>
+                                    <th>Price</th>
+                                    <th>Status</th>
+                                    <th>Availability Control</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-menu-tbody">
+                                <tr><td colspan="5" style="text-align:center; padding:2rem; color:var(--text-secondary);">Loading meal catalog...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Admin Tab 3: User Accounts & Roles -->
+                <div id="admin-view-users" class="admin-view-panel" style="display: none;">
+                    <div class="admin-table-container">
+                        <div class="admin-table-header">
+                            <div>
+                                <h3>👥 Registered Accounts &amp; Access Roles</h3>
+                                <p style="font-size:0.82rem; color:var(--text-secondary);">Assign student, staff, or admin permissions</p>
+                            </div>
+                            <button class="btn-refresh-sm" onclick="fetchAdminUsers()">🔄 Refresh Users</button>
+                        </div>
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>User ID</th>
+                                    <th>Full Name</th>
+                                    <th>Student/Staff ID</th>
+                                    <th>Current Role</th>
+                                    <th>Change Role Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-users-tbody">
+                                <tr><td colspan="5" style="text-align:center; padding:2rem; color:var(--text-secondary);">Loading user accounts...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Dish Modal -->
+        <div id="add-dish-modal" class="modal">
+            <div class="modal-content payment-content">
+                <h3 style="font-size:1.25rem; font-weight:800; color:var(--text-primary); margin-bottom:1rem;">➕ Add New Cafeteria Dish</h3>
+                <div class="input-group">
+                    <label for="new-dish-name">Dish Name</label>
+                    <input type="text" id="new-dish-name" placeholder="e.g. Chapati &amp; Beans">
+                </div>
+                <div class="input-group">
+                    <label for="new-dish-category">Category</label>
+                    <select id="new-dish-category" class="form-select">
+                        <option value="breakfast">Breakfast</option>
+                        <option value="lunch" selected>Lunch &amp; Mains</option>
+                        <option value="drinks">Drinks</option>
+                        <option value="fruits">Fresh Fruits</option>
+                        <option value="snacks">Snacks</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="new-dish-price">Price (KES)</label>
+                    <input type="number" id="new-dish-price" placeholder="100" min="10" step="5">
+                </div>
+                <div class="input-group">
+                    <label for="new-dish-desc">Description</label>
+                    <input type="text" id="new-dish-desc" placeholder="e.g. Freshly rolled whole wheat chapatis served with spiced yellow bean stew">
+                </div>
+                <div class="input-group">
+                    <label for="new-dish-image">Image Filename / URL</label>
+                    <input type="text" id="new-dish-image" placeholder="images/chicken_and_rice.png or URL" value="images/chicken_and_rice.png">
+                </div>
+                <div style="display:flex; gap:0.75rem; margin-top:1.5rem;">
+                    <button class="btn-primary" style="flex:1;" onclick="submitNewDish()">Save Dish to Menu</button>
+                    <button class="btn-cancel" style="flex:1;" onclick="closeAddDishModal()">Cancel</button>
                 </div>
             </div>
         </div>
@@ -517,7 +812,10 @@
                 <div class="success-icon">✓</div>
                 <h3 style="font-size:1.3rem; font-weight:800; color:var(--text-primary);">Order Confirmed!</h3>
                 <div class="receipt-body">
-                    <h4 style="font-size:0.95rem; font-weight:700; color:var(--secondary-color); margin-bottom:0.5rem;">KCAU Smart Dining Receipt</h4>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem; border-bottom:1px dashed var(--border-color); padding-bottom:0.5rem;">
+                        <h4 style="font-size:0.95rem; font-weight:700; color:var(--secondary-color);">KCAU Cafeteria Receipt</h4>
+                        <span id="receipt-order-id" style="font-weight:800; color:var(--primary-color); font-size:0.9rem;">#ORD-000000</span>
+                    </div>
                     <ul id="receipt-items-list" class="receipt-items">
                         <!-- Dynamic items -->
                     </ul>
@@ -525,9 +823,14 @@
                         <span>Total Paid:</span>
                         <strong>KES <span id="receipt-total-amount">0</span></strong>
                     </div>
+                    <div id="receipt-payment-info" style="margin-top:0.6rem; font-size:0.8rem; color:var(--text-secondary); text-align:right;">
+                        Ref: <span id="receipt-ref-code">SIMULATED_SUCCESS</span>
+                    </div>
                 </div>
-                <p style="font-size:0.9rem; color:var(--text-secondary); margin-bottom:1rem;">Your meal ticket has been dispatched to the kitchen!</p>
-                <button id="close-receipt-btn" class="btn-primary">View Kitchen Status →</button>
+                <p style="font-size:0.88rem; color:var(--text-secondary); margin-bottom:1rem;">Your meal order has been transmitted to the kitchen queue!</p>
+                <div style="display:flex; gap:0.5rem;">
+                    <button id="close-receipt-btn" class="btn-primary" style="flex:1;">Done &amp; Track Status →</button>
+                </div>
             </div>
         </div>
 
