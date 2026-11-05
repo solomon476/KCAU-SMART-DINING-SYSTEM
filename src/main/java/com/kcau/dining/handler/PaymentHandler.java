@@ -59,6 +59,8 @@ public class PaymentHandler implements HttpHandler {
         }
 
         Payment payment = paymentService.recordPayment(orderId, method, amount, status, reference);
+        System.out.printf("💳 [PAYMENT RECORDED] %s for Order %s via %s (KES %.2f, Ref: %s)%n",
+            payment.getId(), orderId, payment.getMethod(), payment.getAmount(), payment.getReference());
 
         Map<String, Object> resp = new HashMap<>();
         resp.put("message", "Payment recorded successfully (Simulated)");

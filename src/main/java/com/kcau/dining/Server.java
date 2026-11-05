@@ -36,6 +36,12 @@ public class Server {
         // 1. Initialize SQLite Database Schema & Seed Data
         DatabaseInitializer.init();
 
+        // Check if user simply wants to print database tables and exit
+        if (args != null && args.length > 0 && ("--tables".equalsIgnoreCase(args[0]) || "-t".equalsIgnoreCase(args[0]) || "--show-tables".equalsIgnoreCase(args[0]))) {
+            printDatabaseTables();
+            return;
+        }
+
         // 2. Determine Port
         int port = DEFAULT_PORT;
         String envPort = System.getenv("PORT");
@@ -94,14 +100,151 @@ public class Server {
         server.setExecutor(Executors.newVirtualThreadPerTaskExecutor());
         server.start();
 
-        System.out.println("=================================================");
-        System.out.println("☕ KCAU Smart Dining System - Modular Java Backend");
+        System.out.println("==========================================================================================================");
+        System.out.println("☕ KCAU SMART DINING SYSTEM - MODULAR JAVA BACKEND (OPENJDK 25 + VIRTUAL THREADS)");
         System.out.printf("🚀 Server running on http://localhost:%d%n", port);
         System.out.println("📁 Serving static files from: " + PUBLIC_DIR);
         System.out.println("💾 Database: SQLite (" + DatabaseConnection.getDbPath() + ")");
         System.out.println("🔐 Security: PBKDF2 Hashing + HMAC-SHA256 JWT");
         System.out.println("📋 Roles Enabled: Student, Dining Staff, Admin");
-        System.out.println("=================================================");
+        System.out.println("==========================================================================================================");
+
+        // Print full terminal ASCII tables for user screenshot & grading evidence
+        printDatabaseTables();
+
+        System.out.printf("🟢 Server listening on http://localhost:%d%n", port);
+        System.out.printf("🌐 Open http://localhost:%d in your browser to access Student, Staff, and Admin portals!%n", port);
+        System.out.println("📡 Incoming live HTTP requests will be logged below:");
+        System.out.println("----------------------------------------------------------------------------------------------------------");
+    }
+
+    /**
+     * Prints formatted ASCII tables of database entities for terminal inspection,
+     * grading screenshots, and technical documentation evidence.
+     */
+    public static void printDatabaseTables() {
+        try (java.sql.Connection conn = DatabaseConnection.getConnection();
+             java.sql.Statement stmt = conn.createStatement()) {
+
+            // 1. Users Table
+            System.out.println("\n👤 1. USERS & ROLES TABLE [SQLite: users]");
+            System.out.println("+----------------+-------------------------------+--------------+----------+----------------------------+");
+            System.out.printf("| %-14s | %-29s | %-12s | %-8s | %-26s |%n", "ID", "FULL NAME", "STUDENT ID", "ROLE", "CREATED AT");
+            System.out.println("+----------------+-------------------------------+--------------+----------+----------------------------+");
+            try (java.sql.ResultSet rs = stmt.executeQuery("SELECT id, name, student_id, role, created_at FROM users ORDER BY role DESC")) {
+                while (rs.next()) {
+                    System.out.printf("| %-14s | %-29s | %-12s | %-8s | %-26s |%n",
+                        truncate(rs.getString("id"), 14),
+                        truncate(rs.getString("name"), 29),
+                        truncate(rs.getString("student_id"), 12),
+                        truncate(rs.getString("role"), 8),
+                        truncate(rs.getString("created_at"), 26)
+                    );
+                }
+            }
+            System.out.println("+----------------+-------------------------------+--------------+----------+----------------------------+");
+
+            // 2. Menu Items Table
+            System.out.println("\n🍽️ 2. CAFETERIA MENU ITEMS TABLE [SQLite: menu_items]");
+            System.out.println("+--------+-----------------------+-----------+------------+-----------+------------------------------------+");
+            System.out.printf("| %-6s | %-21s | %-9s | %-10s | %-9s | %-34s |%n", "FOOD ID", "DISH NAME", "CATEGORY", "PRICE (KES)", "STATUS", "DESCRIPTION");
+            System.out.println("+--------+-----------------------+-----------+------------+-----------+------------------------------------+");
+            try (java.sql.ResultSet rs = stmt.executeQuery("SELECT id, name, category, price, available, description FROM menu_items ORDER BY id ASC")) {
+                while (rs.next()) {
+                    String status = rs.getInt("available") == 1 ? "AVAILABLE" : "SOLD OUT";
+                    String price = String.format("KES %.2f", rs.getDouble("price"));
+                    System.out.printf("| %-6s | %-21s | %-9s | %-10s | %-9s | %-34s |%n",
+                        truncate(rs.getString("id"), 6),
+                        truncate(rs.getString("name"), 21),
+                        truncate(rs.getString("category"), 9),
+                        truncate(price, 10),
+                        truncate(status, 9),
+                        truncate(rs.getString("description"), 34)
+                    );
+                }
+            }
+            System.out.println("+--------+-----------------------+-----------+------------+-----------+------------------------------------+");
+
+            // 3. Orders & Order Items Table
+            System.out.println("\n🧾 3. ORDERS & LINE ITEMS TABLE [SQLite: orders & order_items]");
+            System.out.println("+------------+--------------------+----------------------------+------------+-----------+------------------------------------+");
+            System.out.printf("| %-10s | %-18s | %-26s | %-10s | %-9s | %-34s |%n", "ORDER ID", "CUSTOMER NAME", "DATE / TIME", "TOTAL", "STATUS", "ITEMS ORDERED");
+            System.out.println("+------------+--------------------+----------------------------+------------+-----------+------------------------------------+");
+            String ordersSql = "SELECT o.id, o.customer_name, o.date, o.total, o.order_status FROM orders o ORDER BY o.date DESC LIMIT 10";
+            try (java.sql.ResultSet rs = stmt.executeQuery(ordersSql)) {
+                boolean hasOrders = false;
+                while (rs.next()) {
+                    hasOrders = true;
+                    String orderId = rs.getString("id");
+                    String itemsSummary = getItemsSummary(conn, orderId);
+                    String total = String.format("KES %.2f", rs.getDouble("total"));
+                    System.out.printf("| %-10s | %-18s | %-26s | %-10s | %-9s | %-34s |%n",
+                        truncate(orderId, 10),
+                        truncate(rs.getString("customer_name"), 18),
+                        truncate(rs.getString("date"), 26),
+                        truncate(total, 10),
+                        truncate(rs.getString("order_status"), 9),
+                        truncate(itemsSummary, 34)
+                    );
+                }
+                if (!hasOrders) {
+                    System.out.printf("| %-10s | %-18s | %-26s | %-10s | %-9s | %-34s |%n", "-", "No orders yet", "-", "-", "-", "-");
+                }
+            }
+            System.out.println("+------------+--------------------+----------------------------+------------+-----------+------------------------------------+");
+
+            // 4. Payments Table
+            System.out.println("\n💳 4. PAYMENTS AUDIT LEDGER TABLE [SQLite: payments]");
+            System.out.println("+--------------+------------+--------+------------+-----------+---------------+----------------------------+");
+            System.out.printf("| %-12s | %-10s | %-6s | %-10s | %-9s | %-13s | %-26s |%n", "PAYMENT ID", "ORDER ID", "METHOD", "AMOUNT", "STATUS", "REFERENCE", "SETTLEMENT TIME");
+            System.out.println("+--------------+------------+--------+------------+-----------+---------------+----------------------------+");
+            try (java.sql.ResultSet rs = stmt.executeQuery("SELECT id, order_id, method, amount, status, reference, created_at FROM payments ORDER BY created_at DESC LIMIT 10")) {
+                boolean hasPay = false;
+                while (rs.next()) {
+                    hasPay = true;
+                    String amt = String.format("KES %.2f", rs.getDouble("amount"));
+                    System.out.printf("| %-12s | %-10s | %-6s | %-10s | %-9s | %-13s | %-26s |%n",
+                        truncate(rs.getString("id"), 12),
+                        truncate(rs.getString("order_id"), 10),
+                        truncate(rs.getString("method"), 6),
+                        truncate(amt, 10),
+                        truncate(rs.getString("status"), 9),
+                        truncate(rs.getString("reference"), 13),
+                        truncate(rs.getString("created_at"), 26)
+                    );
+                }
+                if (!hasPay) {
+                    System.out.printf("| %-12s | %-10s | %-6s | %-10s | %-9s | %-13s | %-26s |%n", "-", "-", "-", "-", "-", "-", "-");
+                }
+            }
+            System.out.println("+--------------+------------+--------+------------+-----------+---------------+----------------------------+");
+
+        } catch (Exception e) {
+            System.err.println("Notice: Could not print database tables: " + e.getMessage());
+        }
+        System.out.println();
+    }
+
+    private static String truncate(String val, int max) {
+        if (val == null) return "";
+        return (val.length() <= max) ? val : val.substring(0, Math.max(0, max - 3)) + "...";
+    }
+
+    private static String getItemsSummary(java.sql.Connection conn, String orderId) {
+        try (java.sql.PreparedStatement pstmt = conn.prepareStatement(
+                "SELECT food_name, quantity FROM order_items WHERE order_id = ?")) {
+            pstmt.setString(1, orderId);
+            try (java.sql.ResultSet rs = pstmt.executeQuery()) {
+                StringBuilder sb = new StringBuilder();
+                while (rs.next()) {
+                    if (sb.length() > 0) sb.append(", ");
+                    sb.append(rs.getString("food_name")).append(" (").append(rs.getInt("quantity")).append(")");
+                }
+                return sb.toString();
+            }
+        } catch (Exception e) {
+            return "-";
+        }
     }
 
     // -------------------------------------------------------------

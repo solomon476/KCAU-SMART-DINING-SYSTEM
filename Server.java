@@ -12,7 +12,7 @@ public class Server {
             java.util.List<String> cmd = new java.util.ArrayList<>();
             cmd.add("java");
             cmd.add("-cp");
-            cmd.add("lib/*");
+            cmd.add("lib/*:src/main/java");
             cmd.add("src/main/java/com/kcau/dining/Server.java");
             if (args != null) {
                 java.util.Collections.addAll(cmd, args);

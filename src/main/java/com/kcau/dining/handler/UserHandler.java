@@ -51,7 +51,13 @@ public class UserHandler implements HttpHandler {
         Map<String, String> body = HttpHelper.parseJsonBody(exchange);
         String name = body.get("name");
         String studentId = body.get("studentId");
+        if (studentId == null || studentId.isBlank()) studentId = body.get("student_id");
+        if (studentId == null || studentId.isBlank()) studentId = body.get("username");
+        if (studentId == null || studentId.isBlank()) studentId = body.get("userId");
+
         String password = body.get("password");
+        if (password == null || password.isBlank()) password = body.get("pass");
+
         String role = body.getOrDefault("role", "student");
 
         User newUser = userService.registerUser(name, studentId, password, role);
@@ -66,9 +72,20 @@ public class UserHandler implements HttpHandler {
     private void handleLogin(HttpExchange exchange) throws Exception {
         Map<String, String> body = HttpHelper.parseJsonBody(exchange);
         String studentId = body.get("studentId");
+        if (studentId == null || studentId.isBlank()) studentId = body.get("student_id");
+        if (studentId == null || studentId.isBlank()) studentId = body.get("username");
+        if (studentId == null || studentId.isBlank()) studentId = body.get("userId");
+        if (studentId == null || studentId.isBlank()) studentId = body.get("id");
+        if (studentId == null || studentId.isBlank()) studentId = body.get("email");
+        if (studentId == null || studentId.isBlank()) studentId = body.get("name");
+
         String password = body.get("password");
+        if (password == null || password.isBlank()) password = body.get("pass");
 
         User user = userService.authenticate(studentId, password);
+
+        System.out.printf("🔑 [LOGIN SUCCESS] %s (ID: %s, Role: %s) authenticated successfully%n",
+            user.getName(), user.getStudentId(), user.getRole().toUpperCase());
 
         long expSeconds = Instant.now().plusSeconds(7 * 24 * 3600).getEpochSecond();
         Map<String, Object> claims = new HashMap<>();

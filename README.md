@@ -9,10 +9,12 @@ An enterprise-grade campus cafeteria online ordering and dining management platf
 
 * **GitHub Repository:** [https://github.com/solomon476/KCAU-SMART-DINING-SYSTEM](https://github.com/solomon476/KCAU-SMART-DINING-SYSTEM)
 * **Vercel Production Deployment:** [https://kca-cafeteria.vercel.app](https://kca-cafeteria.vercel.app)
-* **Technical Documentation PDF:** [KCAU_Smart_Dining_System_CAT1_Technical_Documentation.pdf](KCAU_Smart_Dining_System_CAT1_Technical_Documentation.pdf)
-* **Java Source Code PDF:** [KCAU_SMART_DINING_JAVA_SOURCE_CODE.pdf](KCAU_SMART_DINING_JAVA_SOURCE_CODE.pdf)
-* **Java Source Code DOCX:** [KCAU_SMART_DINING_JAVA_SOURCE_CODE.docx](KCAU_SMART_DINING_JAVA_SOURCE_CODE.docx)
-* **Testing Evidence:** [TESTING_EVIDENCE.md](TESTING_EVIDENCE.md)
+* **Deliverable 1 — CAT 1 Technical Documentation (PDF):** [KCAU_Smart_Dining_System_CAT1_Technical_Documentation.pdf](KCAU_Smart_Dining_System_CAT1_Technical_Documentation.pdf)
+* **Deliverable 2 — Java Source Code (PDF):** [KCAU_SMART_DINING_JAVA_SOURCE_CODE.pdf](KCAU_SMART_DINING_JAVA_SOURCE_CODE.pdf)
+* **Deliverable 2 — Java Source Code (DOCX):** [KCAU_SMART_DINING_JAVA_SOURCE_CODE.docx](KCAU_SMART_DINING_JAVA_SOURCE_CODE.docx)
+* **Deliverable 3 — Database Documentation (PDF):** [KCAU_Smart_Dining_Database_Documentation.pdf](KCAU_Smart_Dining_Database_Documentation.pdf)
+* **Deliverable 3 — Database Documentation (DOCX):** [KCAU_Smart_Dining_Database_Documentation.docx](KCAU_Smart_Dining_Database_Documentation.docx)
+* **Deliverable 4 — Testing Evidence & Report:** [TESTING_EVIDENCE.md](TESTING_EVIDENCE.md)
 
 ---
 
@@ -137,25 +139,41 @@ git clone https://github.com/solomon476/KCAU-SMART-DINING-SYSTEM.git
 cd KCAU-SMART-DINING-SYSTEM
 ```
 
-### Step 2: Launch the Java Backend
-You can use any of the following equivalent methods:
+### Step 2: Run the Code in the Terminal (Interactive Console or Backend Server)
 
+You can run the system directly in your terminal using any of the following modes:
+
+#### Option 1: Interactive Terminal Console Application (Recommended for Terminal Screenshots)
+Runs fully inside your laptop terminal without needing a browser. Displays formatted ASCII tables for **Menus**, **Orders**, **Users**, and **Payments**, and lets you test login, place orders, and update kitchen status:
 ```bash
-# Method A: Using the shell script (Recommended)
-bash run-java.sh
-
-# Method B: Using npm script
-npm start
-
-# Method C: Direct Java execution with bundled libraries
-java -cp "lib/*:src/main/java" src/main/java/com/kcau/dining/Server.java
-
-# Method D: Direct root launcher execution
-java Server.java
+./terminal-app.sh
+# or
+bash terminal-app.sh
 ```
 
-### Step 3: Open in Browser
-Visit **`http://localhost:3000/`** to access the system.
+#### Option 2: Quick ASCII Tables Output (Instant Terminal Screenshot)
+Instantly dumps all SQLite tables (menus, orders, users, payments) to the terminal and exits:
+```bash
+./show-tables.sh
+# or
+bash show-tables.sh
+```
+
+#### Option 3: Full Java Web Backend Server
+Starts the HTTP server on port 3000, displays the database tables, and serves the 3 connected web portals:
+```bash
+# Method A: Using the shell script (Recommended)
+./run-java.sh
+
+# Method B: Direct Java execution with bundled libraries
+java -cp "lib/*:src/main/java" src/main/java/com/kcau/dining/Server.java
+
+# Method C: Using npm script
+npm start
+```
+
+### Step 3: Open in Browser (If running Web Backend)
+Visit **`http://localhost:3000/`** to access the Student, Kitchen Staff, and Admin web portals.
 
 ---
 

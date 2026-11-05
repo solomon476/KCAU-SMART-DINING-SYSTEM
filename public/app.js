@@ -60,7 +60,13 @@ const LocalDB = {
     findUser(studentId) {
         const users = this.getUsers();
         const norm = (studentId || '').trim().toUpperCase();
-        return users.find(u => (u.studentId || '').trim().toUpperCase() === norm);
+        return users.find(u => {
+            const uId = (u.studentId || '').trim().toUpperCase();
+            const uRole = (u.role || '').trim().toUpperCase();
+            const uName = (u.name || '').trim().toUpperCase();
+            const uKey = (u.id || '').trim().toUpperCase();
+            return uId === norm || uRole === norm || uKey === norm || uName === norm || uName.includes(norm);
+        });
     },
     createUser(name, studentId, password, role = 'student') {
         const users = this.getUsers();

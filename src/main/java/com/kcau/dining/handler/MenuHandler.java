@@ -103,6 +103,7 @@ public class MenuHandler implements HttpHandler {
         boolean updated = menuService.toggleAvailability(foodId, available);
 
         if (updated) {
+            System.out.printf("🍲 [ADMIN MENU UPDATE] Dish %s stock toggled -> %s%n", foodId, available ? "AVAILABLE" : "OUT OF STOCK");
             HttpHelper.sendJson(exchange, 200, Map.of("message", "Availability updated for " + foodId, "available", available));
         } else {
             HttpHelper.sendError(exchange, 404, "Menu item not found");

@@ -49,28 +49,53 @@ public class UserService {
 
     public User authenticate(String studentId, String password) throws Exception {
         if (studentId == null || studentId.isBlank() || password == null || password.isBlank()) {
-            throw new IllegalArgumentException("Student ID and password are required");
+            throw new IllegalArgumentException("Student ID / Username and password are required");
         }
 
-        String normId = studentId.trim().toUpperCase();
+        String normId = studentId.trim();
         User user = getUserByStudentId(normId);
         if (user == null) {
-            throw new IllegalArgumentException("No account found with Student ID '" + studentId.trim() + "'. Please sign up first!");
+            throw new IllegalArgumentException("No account found matching '" + studentId.trim() + "'. Please check your Student ID/Username or sign up first!");
         }
 
         if (!DatabaseInitializer.verifyPassword(password, user.getPasswordHash())) {
-            throw new IllegalArgumentException("Incorrect password. Please try again.");
+            throw new IllegalArgumentException("Incorrect password for " + user.getName() + " (" + user.getStudentId() + "). Please try again.");
         }
 
         return user;
     }
 
     public User getUserByStudentId(String studentId) throws Exception {
-        String normId = studentId.trim().toUpperCase();
-        String sql = "SELECT id, name, student_id, password_hash, role, created_at FROM users WHERE UPPER(student_id) = ?";
+        if (studentId == null || studentId.isBlank()) return null;
+        String raw = studentId.trim();
+        String upper = raw.toUpperCase();
+
+        String sql = """
+            SELECT id, name, student_id, password_hash, role, created_at FROM users 
+            WHERE UPPER(student_id) = ? 
+               OR UPPER(id) = ? 
+               OR UPPER(role) = ?
+               OR UPPER(name) = ?
+               OR UPPER(name) LIKE ?
+            ORDER BY 
+               CASE 
+                 WHEN UPPER(student_id) = ? THEN 1
+                 WHEN UPPER(id) = ? THEN 2
+                 WHEN UPPER(role) = ? THEN 3
+                 ELSE 4
+               END
+            LIMIT 1
+        """;
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, normId);
+            pstmt.setString(1, upper);
+            pstmt.setString(2, upper);
+            pstmt.setString(3, upper);
+            pstmt.setString(4, upper);
+            pstmt.setString(5, "%" + upper + "%");
+            pstmt.setString(6, upper);
+            pstmt.setString(7, upper);
+            pstmt.setString(8, upper);
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
                     Instant createdAt = Instant.parse(rs.getString("created_at"));

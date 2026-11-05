@@ -89,6 +89,8 @@ public class OrderHandler implements HttpHandler {
         }
 
         Order order = orderService.createOrder(userId, customerName, items);
+        System.out.printf("🛒 [ORDER PLACED] %s by %s for KES %.2f (%d line items)%n",
+            order.getOrderId(), order.getCustomerName(), order.getTotalAmount(), items.size());
 
         Map<String, Object> resp = new HashMap<>();
         resp.put("message", "Order placed successfully!");
@@ -149,6 +151,7 @@ public class OrderHandler implements HttpHandler {
 
         boolean updated = orderService.updateOrderStatus(orderId, status);
         if (updated) {
+            System.out.printf("👨‍🍳 [KITCHEN KDS UPDATE] Order %s changed status -> %s%n", orderId, status.toUpperCase());
             HttpHelper.sendJson(exchange, 200, Map.of("message", "Order status updated to " + status, "orderId", orderId, "status", status));
         } else {
             HttpHelper.sendError(exchange, 404, "Order not found");

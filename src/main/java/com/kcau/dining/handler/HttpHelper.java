@@ -56,14 +56,19 @@ public class HttpHelper {
         Map<String, String> result = new HashMap<>();
         try {
             InputStream is = exchange.getRequestBody();
-            String body = new String(is.readAllBytes(), StandardCharsets.UTF_8);
-            Pattern pattern = Pattern.compile("\"([^\"]+)\"\\s*:\\s*(?:\"([^\"]*)\"|([0-9.]+)|(true|false)|null)");
+            String body = new String(is.readAllBytes(), StandardCharsets.UTF_8).trim();
+            if (body.isEmpty()) return result;
+
+            Pattern pattern = Pattern.compile("\"([^\"]+)\"\\s*:\\s*(?:\"((?:\\\\\"|[^\"])*)\"|([0-9.]+)|(true|false)|null)");
             Matcher matcher = pattern.matcher(body);
             while (matcher.find()) {
                 String key = matcher.group(1);
                 String value = matcher.group(2) != null ? matcher.group(2) : matcher.group(3);
                 if (value == null && matcher.group(4) != null) {
                     value = matcher.group(4);
+                }
+                if (value != null) {
+                    value = value.replace("\\\"", "\"").replace("\\\\", "\\");
                 }
                 result.put(key, value);
             }

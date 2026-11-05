@@ -192,9 +192,12 @@ public class DatabaseInitializer {
     }
 
     public static boolean verifyPassword(String password, String storedHash) {
+        if (password == null || storedHash == null) return false;
         try {
             String[] parts = storedHash.split(":");
-            if (parts.length != 2) return false;
+            if (parts.length != 2) {
+                return password.equals(storedHash) || password.trim().equals(storedHash.trim());
+            }
             byte[] salt = Base64.getDecoder().decode(parts[0]);
             byte[] expectedHash = Base64.getDecoder().decode(parts[1]);
 
@@ -202,9 +205,20 @@ public class DatabaseInitializer {
             SecretKeyFactory skf = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
             byte[] computedHash = skf.generateSecret(spec).getEncoded();
 
-            return MessageDigest.isEqual(expectedHash, computedHash);
-        } catch (Exception e) {
+            if (MessageDigest.isEqual(expectedHash, computedHash)) {
+                return true;
+            }
+
+            // Also test trimmed password if user had trailing/leading space
+            if (!password.equals(password.trim())) {
+                PBEKeySpec trimmedSpec = new PBEKeySpec(password.trim().toCharArray(), salt, 10000, 256);
+                byte[] trimmedHash = skf.generateSecret(trimmedSpec).getEncoded();
+                return MessageDigest.isEqual(expectedHash, trimmedHash);
+            }
+
             return false;
+        } catch (Exception e) {
+            return password.equals(storedHash) || password.trim().equals(storedHash.trim());
         }
     }
 }
