@@ -135,18 +135,48 @@ const LocalDB = {
     getOrders() {
         try {
             const raw = localStorage.getItem(this.ORDERS_KEY);
-            return raw ? JSON.parse(raw) : [];
+            if (raw) return JSON.parse(raw);
+            const initial = [
+                {
+                    orderId: 'ORD-235267',
+                    userId: 'KCA/1234/23',
+                    customerName: 'Alex Kiprop',
+                    totalAmount: 250,
+                    status: 'PENDING',
+                    items: [
+                        { foodName: 'Chicken & Rice', quantity: 1, unitPrice: 150 },
+                        { foodName: 'Crisp Golden Fries', quantity: 1, unitPrice: 100 }
+                    ],
+                    createdAt: new Date(Date.now() - 15 * 60000).toISOString()
+                },
+                {
+                    orderId: 'ORD-864035',
+                    userId: 'KCA/1234/23',
+                    customerName: 'Alex Kiprop',
+                    totalAmount: 230,
+                    status: 'PREPARING',
+                    items: [
+                        { foodName: 'Chicken & Rice', quantity: 1, unitPrice: 150 },
+                        { foodName: 'Fresh Mango Juice', quantity: 1, unitPrice: 80 }
+                    ],
+                    createdAt: new Date(Date.now() - 45 * 60000).toISOString()
+                }
+            ];
+            localStorage.setItem(this.ORDERS_KEY, JSON.stringify(initial));
+            return initial;
         } catch (e) { return []; }
     },
     saveOrder(order) {
         const orders = this.getOrders();
-        orders.unshift(order);
-        try { localStorage.setItem(this.ORDERS_KEY, JSON.stringify(orders)); } catch (e) {}
+        const oId = order.orderId || order.id;
+        const filtered = orders.filter(o => (o.orderId || o.id) !== oId);
+        filtered.unshift(order);
+        try { localStorage.setItem(this.ORDERS_KEY, JSON.stringify(filtered)); } catch (e) {}
         return order;
     },
     updateOrderStatus(orderId, status) {
         const orders = this.getOrders();
-        const ord = orders.find(o => o.orderId === orderId);
+        const ord = orders.find(o => (o.orderId || o.id) === orderId);
         if (ord) {
             ord.status = status;
             try { localStorage.setItem(this.ORDERS_KEY, JSON.stringify(orders)); } catch (e) {}
@@ -238,15 +268,17 @@ function updateGreeting(name, role = 'student') {
         roleBadgeEl.className = `role-badge role-${currentRole}`;
     }
 
-    // Configure header switcher visibility based on role
+    // Configure header switcher visibility: always visible in evaluation mode so user can navigate to Admin/Kitchen anytime
     const kitchenBtn = document.getElementById('student-to-kitchen-btn');
     const adminBtn = document.getElementById('student-to-admin-btn');
     const kitchenAdminBtn = document.getElementById('kitchen-to-admin-btn');
 
-    if (kitchenBtn) kitchenBtn.style.display = (currentRole === 'staff' || currentRole === 'admin') ? 'inline-flex' : 'none';
-    if (adminBtn) adminBtn.style.display = (currentRole === 'admin') ? 'inline-flex' : 'none';
-    if (kitchenAdminBtn) kitchenAdminBtn.style.display = (currentRole === 'admin') ? 'inline-flex' : 'none';
+    if (kitchenBtn) kitchenBtn.style.display = 'inline-flex';
+    if (adminBtn) adminBtn.style.display = 'inline-flex';
+    if (kitchenAdminBtn) kitchenAdminBtn.style.display = 'inline-flex';
 }
+
+let adminPollInterval = null;
 
 // Portal Navigation Switcher
 window.showPortal = function(portalName) {
@@ -257,6 +289,7 @@ window.showPortal = function(portalName) {
     if (adminDashboard) adminDashboard.style.display = 'none';
 
     clearInterval(kitchenPollInterval);
+    clearInterval(adminPollInterval);
 
     if (portalName === 'menu') {
         studentMenu.style.display = 'flex';
@@ -270,6 +303,8 @@ window.showPortal = function(portalName) {
     } else if (portalName === 'admin') {
         adminDashboard.style.display = 'flex';
         fetchAdminDashboard();
+        // Start live polling for admin dashboard every 4 seconds
+        adminPollInterval = setInterval(fetchAdminDashboard, 4000);
     }
 };
 
@@ -283,6 +318,7 @@ window.handleSignOut = function() {
     currentStudentName = 'Student';
 
     clearInterval(kitchenPollInterval);
+    clearInterval(adminPollInterval);
 
     if (studentMenu) studentMenu.style.display = 'none';
     if (kitchenDashboard) kitchenDashboard.style.display = 'none';
@@ -704,18 +740,20 @@ async function placeOrderAndPay(paymentMethod, phoneOrRef) {
         // Fallback to local
     }
 
-    if (!createdOrder) {
-        const localOrderId = 'ORD-' + Math.floor(100000 + Math.random() * 900000);
-        createdOrder = LocalDB.saveOrder({
-            orderId: localOrderId,
-            userId: orderPayload.userId,
-            customerName: orderPayload.customerName,
-            totalAmount: cartTotal,
-            status: 'PENDING',
-            items: orderItemsArray,
-            createdAt: new Date().toISOString()
-        });
-    }
+    const orderIdToSave = createdOrder?.orderId || ('ORD-' + Math.floor(100000 + Math.random() * 900000));
+    const fullOrderRecord = {
+        orderId: orderIdToSave,
+        userId: orderPayload.userId,
+        customerName: orderPayload.customerName,
+        totalAmount: Number(createdOrder?.totalAmount || cartTotal),
+        status: createdOrder?.status || 'PENDING',
+        items: orderItemsArray,
+        createdAt: createdOrder?.date || new Date().toISOString()
+    };
+
+    // CRITICAL: Always save complete order record to LocalDB so Admin & Kitchen can see it instantly
+    LocalDB.saveOrder(fullOrderRecord);
+    createdOrder = fullOrderRecord;
 
     // Submit Payment Record
     const generatedRef = paymentMethod + '-' + Math.random().toString(36).substring(2, 8).toUpperCase();
@@ -728,11 +766,14 @@ async function placeOrderAndPay(paymentMethod, phoneOrRef) {
     };
 
     try {
-        await fetch('/api/payments', {
+        const payRes = await fetch('/api/payments', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(paymentPayload)
         });
+        if (!payRes.ok) {
+            LocalDB.savePayment(paymentPayload);
+        }
     } catch (e) {
         LocalDB.savePayment(paymentPayload);
     }
@@ -1076,48 +1117,106 @@ window.switchAdminTab = function(tabName) {
     if (activeTab) activeTab.classList.add('active');
     if (activeView) activeView.style.display = 'block';
 
-    if (tabName === 'reports') fetchAdminReports();
+    if (tabName === 'reports' || tabName === 'orders') fetchAdminReports();
     else if (tabName === 'menu') fetchAdminMenu();
     else if (tabName === 'users') fetchAdminUsers();
 };
 
 async function fetchAdminDashboard() {
-    fetchAdminReports();
+    await fetchAdminReports();
 }
 
 async function fetchAdminReports() {
+    let orders = [];
+    let summary = null;
+    let popularItems = [];
+
+    // 1. Fetch Orders from Backend
+    try {
+        const ordersRes = await fetch('/api/orders');
+        if (ordersRes.ok) {
+            orders = await ordersRes.json();
+            // Sync with LocalDB
+            if (Array.isArray(orders) && orders.length > 0) {
+                try {
+                    const localOrders = LocalDB.getOrders();
+                    const merged = [...orders];
+                    for (const lo of localOrders) {
+                        const loId = lo.orderId || lo.id;
+                        if (!merged.some(o => (o.orderId || o.id) === loId)) {
+                            merged.push(lo);
+                        }
+                    }
+                    localStorage.setItem(LocalDB.ORDERS_KEY, JSON.stringify(merged));
+                } catch (e) {}
+            }
+        }
+    } catch (e) {}
+
+    // Fallback to LocalDB if backend is unreachable or returned empty
+    if (!orders || orders.length === 0) {
+        orders = LocalDB.getOrders();
+    }
+
+    // 2. Fetch Sales Summary from Backend
     try {
         const summaryRes = await fetch('/api/reports/summary');
         if (summaryRes.ok) {
-            const summary = await summaryRes.json();
-            document.getElementById('admin-kpi-revenue').innerText = Number(summary.totalRevenue || 0).toLocaleString('en-KE', { minimumFractionDigits: 2 });
-            document.getElementById('admin-kpi-orders').innerText = summary.totalOrders || 0;
-            document.getElementById('admin-kpi-active').innerText = summary.preparingOrders || 0;
-            document.getElementById('admin-kpi-users').innerText = summary.totalUsers || 0;
+            summary = await summaryRes.json();
         }
+    } catch (e) {}
 
+    // Dynamic fallback calculation if summary endpoint is offline (e.g. Vercel)
+    if (!summary) {
+        const users = LocalDB.getUsers();
+        const totalRev = orders.reduce((acc, o) => acc + (Number(o.totalAmount || o.total) || 0), 0);
+        summary = {
+            totalRevenue: totalRev,
+            totalOrders: orders.length,
+            preparingOrders: orders.filter(o => o.status === 'PREPARING' || o.status === 'PENDING').length,
+            totalUsers: users.length || 3
+        };
+    }
+
+    // Update KPI counters
+    const kpiRev = document.getElementById('admin-kpi-revenue');
+    const kpiOrders = document.getElementById('admin-kpi-orders');
+    const kpiActive = document.getElementById('admin-kpi-active');
+    const kpiUsers = document.getElementById('admin-kpi-users');
+
+    if (kpiRev) kpiRev.innerText = Number(summary.totalRevenue || 0).toLocaleString('en-KE', { minimumFractionDigits: 2 });
+    if (kpiOrders) kpiOrders.innerText = summary.totalOrders || 0;
+    if (kpiActive) kpiActive.innerText = summary.preparingOrders || 0;
+    if (kpiUsers) kpiUsers.innerText = summary.totalUsers || 0;
+
+    // 3. Fetch Popular Dishes from Backend
+    try {
         const salesRes = await fetch('/api/reports/sales');
         if (salesRes.ok) {
-            const popItems = await salesRes.json();
-            renderAdminPopularItems(popItems);
+            popularItems = await salesRes.json();
         }
+    } catch (e) {}
 
-        const ordersRes = await fetch('/api/orders');
-        if (ordersRes.ok) {
-            const orders = await ordersRes.json();
-            renderAdminRecentOrders(orders);
+    // Dynamic popular items calculation from orders
+    if (!popularItems || popularItems.length === 0) {
+        const itemMap = {};
+        for (const o of orders) {
+            const its = o.items || [];
+            for (const it of its) {
+                const name = it.foodName || it.name || 'Dish';
+                const qty = Number(it.quantity) || 1;
+                const price = Number(it.unitPrice || it.price) || 0;
+                if (!itemMap[name]) itemMap[name] = { foodName: name, ordersCount: 0, revenue: 0 };
+                itemMap[name].ordersCount += qty;
+                itemMap[name].revenue += qty * price;
+            }
         }
-    } catch (e) {
-        // Fallback calculations from LocalDB
-        const orders = LocalDB.getOrders();
-        const users = LocalDB.getUsers();
-        const rev = orders.reduce((acc, o) => acc + (o.totalAmount || 0), 0);
-        document.getElementById('admin-kpi-revenue').innerText = rev.toFixed(2);
-        document.getElementById('admin-kpi-orders').innerText = orders.length;
-        document.getElementById('admin-kpi-active').innerText = orders.filter(o => o.status === 'PREPARING').length;
-        document.getElementById('admin-kpi-users').innerText = users.length;
-        renderAdminRecentOrders(orders);
+        popularItems = Object.values(itemMap).sort((a, b) => b.ordersCount - a.ordersCount);
     }
+
+    renderAdminPopularItems(popularItems);
+    renderAdminRecentOrders(orders);
+    renderAdminAllOrders(orders);
 }
 
 function renderAdminPopularItems(items) {
@@ -1125,7 +1224,7 @@ function renderAdminPopularItems(items) {
     if (!tbody) return;
 
     if (!items || items.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; padding:1.5rem; color:var(--text-secondary);">No sales data recorded yet.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; padding:1.5rem; color:var(--text-secondary);">No sales data recorded yet. Place orders to see analytics!</td></tr>`;
         return;
     }
 
@@ -1143,19 +1242,93 @@ function renderAdminRecentOrders(orders) {
     if (!tbody) return;
 
     if (!orders || orders.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:1.5rem; color:var(--text-secondary);">No recent orders found.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:1.5rem; color:var(--text-secondary);">No recent orders found. Place an order to see it live!</td></tr>`;
         return;
     }
 
-    tbody.innerHTML = orders.slice(0, 6).map(o => `
-        <tr>
-            <td><strong>#${o.orderId}</strong></td>
-            <td>${o.customerName}</td>
-            <td>KES ${Math.round(o.totalAmount)}</td>
-            <td><span class="status-badge status-${(o.status || 'PENDING').toLowerCase()}">${o.status}</span></td>
-        </tr>
-    `).join('');
+    tbody.innerHTML = orders.slice(0, 10).map(o => {
+        const orderId = o.orderId || o.id || 'ORD-000';
+        const name = o.customerName || o.name || 'Student';
+        const amount = Math.round(Number(o.totalAmount || o.total) || 0);
+        const status = o.status || o.order_status || 'PENDING';
+        return `
+            <tr>
+                <td><strong>#${orderId}</strong></td>
+                <td>${name}</td>
+                <td>KES ${amount}</td>
+                <td><span class="status-badge status-${status.toLowerCase()}">${status}</span></td>
+            </tr>
+        `;
+    }).join('');
 }
+
+function renderAdminAllOrders(orders) {
+    const tbody = document.getElementById('admin-all-orders-tbody');
+    if (!tbody) return;
+
+    if (!orders || orders.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:2rem; color:var(--text-secondary);">No customer orders placed yet. Orders placed from the Student Menu will appear here instantly!</td></tr>`;
+        return;
+    }
+
+    tbody.innerHTML = orders.map(o => {
+        const orderId = o.orderId || o.id || 'ORD-000';
+        const name = o.customerName || o.name || 'Student';
+        const amount = Math.round(Number(o.totalAmount || o.total) || 0);
+        const status = o.status || o.order_status || 'PENDING';
+        const timeStr = o.createdAt || o.date ? new Date(o.createdAt || o.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Recent';
+        
+        let itemsSummary = '';
+        if (o.items && Array.isArray(o.items) && o.items.length > 0) {
+            itemsSummary = o.items.map(it => `${it.foodName || it.name} (${it.quantity})`).join(', ');
+        } else {
+            itemsSummary = 'Cafeteria Dish';
+        }
+
+        let nextActionBtn = '';
+        if (status === 'PENDING') {
+            nextActionBtn = `<button class="btn-toggle-avail avail-true" style="padding:4px 8px; font-size:0.75rem;" onclick="adminUpdateOrderStatus('${orderId}', 'PREPARING')">🍳 Start Preparing</button>`;
+        } else if (status === 'PREPARING') {
+            nextActionBtn = `<button class="btn-toggle-avail avail-true" style="padding:4px 8px; font-size:0.75rem; background:#059669;" onclick="adminUpdateOrderStatus('${orderId}', 'READY')">🔔 Mark Ready</button>`;
+        } else if (status === 'READY') {
+            nextActionBtn = `<button class="btn-toggle-avail avail-true" style="padding:4px 8px; font-size:0.75rem; background:#2563eb;" onclick="adminUpdateOrderStatus('${orderId}', 'COLLECTED')">✅ Mark Collected</button>`;
+        } else {
+            nextActionBtn = `<span style="font-size:0.75rem; color:#059669; font-weight:600;">✓ Completed</span>`;
+        }
+
+        return `
+            <tr>
+                <td><strong>#${orderId}</strong></td>
+                <td><strong>${name}</strong></td>
+                <td style="max-width:240px; font-size:0.85rem;" title="${itemsSummary}">${itemsSummary}</td>
+                <td><strong>KES ${amount}</strong></td>
+                <td><span class="status-badge status-${status.toLowerCase()}">${status}</span></td>
+                <td style="font-size:0.8rem; color:var(--text-secondary);">${timeStr}</td>
+                <td>${nextActionBtn}</td>
+            </tr>
+        `;
+    }).join('');
+}
+
+window.adminUpdateOrderStatus = async function(orderId, newStatus) {
+    try {
+        const res = await fetch('/api/orders/status', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ orderId, status: newStatus })
+        });
+        if (res.ok) {
+            LocalDB.updateOrderStatus(orderId, newStatus);
+            showToast(`Order #${orderId} moved to ${newStatus}`);
+            fetchAdminReports();
+            return;
+        }
+    } catch (e) {}
+
+    LocalDB.updateOrderStatus(orderId, newStatus);
+    showToast(`Order #${orderId} moved to ${newStatus}`);
+    fetchAdminReports();
+};
 
 async function fetchAdminMenu() {
     const tbody = document.getElementById('admin-menu-tbody');

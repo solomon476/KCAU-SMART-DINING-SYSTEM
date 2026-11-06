@@ -545,6 +545,7 @@
                     <!-- Admin Section Nav Pills -->
                     <div class="header-nav-pills">
                         <button class="nav-subtab active" id="admin-tab-reports" onclick="switchAdminTab('reports')">📊 Analytics &amp; Sales</button>
+                        <button class="nav-subtab" id="admin-tab-orders" onclick="switchAdminTab('orders')">🧾 All Customer Orders</button>
                         <button class="nav-subtab" id="admin-tab-menu" onclick="switchAdminTab('menu')">🍲 Meal Catalog</button>
                         <button class="nav-subtab" id="admin-tab-users" onclick="switchAdminTab('users')">👥 User Accounts</button>
                     </div>
@@ -615,7 +616,10 @@
                         <div class="admin-table-container">
                             <div class="admin-table-header">
                                 <h3>📋 Recent Dining Orders</h3>
-                                <button class="btn-refresh-sm" onclick="fetchAdminReports()">🔄 Refresh</button>
+                                <div style="display:flex; gap:0.5rem; align-items:center;">
+                                    <button class="btn-nav-portal" style="font-size:0.75rem; padding:4px 10px;" onclick="switchAdminTab('orders')">View All &rarr;</button>
+                                    <button class="btn-refresh-sm" onclick="fetchAdminReports()">🔄 Refresh</button>
+                                </div>
                             </div>
                             <table class="admin-table">
                                 <thead>
@@ -631,6 +635,37 @@
                                 </tbody>
                             </table>
                         </div>
+                    </div>
+                </div>
+
+                <!-- Admin Tab 1.5: Complete Customer Orders View -->
+                <div id="admin-view-orders" class="admin-view-panel" style="display: none;">
+                    <div class="admin-table-container">
+                        <div class="admin-table-header">
+                            <div>
+                                <h3>🧾 Complete Orders Management Ledger</h3>
+                                <p style="font-size:0.82rem; color:var(--text-secondary);">Real-time live queue of all customer dining orders across SQLite &amp; LocalDB</p>
+                            </div>
+                            <div style="display:flex; gap:0.5rem; align-items:center;">
+                                <button class="btn-refresh-sm" onclick="fetchAdminReports()">🔄 Refresh Orders</button>
+                            </div>
+                        </div>
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Customer Name</th>
+                                    <th>Items Ordered</th>
+                                    <th>Total Amount</th>
+                                    <th>Status</th>
+                                    <th>Time</th>
+                                    <th>Kitchen Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-all-orders-tbody">
+                                <tr><td colspan="7" style="text-align:center; padding:2rem; color:var(--text-secondary);">Loading customer orders...</td></tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
 
