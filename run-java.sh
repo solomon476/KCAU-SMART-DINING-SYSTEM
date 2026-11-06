@@ -2,4 +2,4 @@
 # Script to launch the Java backend for KCAU Smart Dining System
 PORT=${PORT:-3000}
 echo "Starting KCAU Smart Dining System Java Backend (SQLite & Virtual Threads) on port $PORT..."
-exec java -cp "lib/*:src/main/java" src/main/java/com/kcau/dining/Server.java "$@"
+exec java --enable-native-access=ALL-UNNAMED -cp "lib/*:src/main/java" src/main/java/com/kcau/dining/Server.java "$@"

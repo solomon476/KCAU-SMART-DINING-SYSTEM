@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
-# Script to display all SQLite database tables in a formatted terminal view
-exec java -cp "lib/*:src/main/java" src/main/java/com/kcau/dining/Server.java --tables
+# KCAU Smart Dining System - Formatted Database Tables for Screenshots
+exec java --enable-native-access=ALL-UNNAMED -cp "lib/*:src/main/java" src/main/java/com/kcau/dining/ConsoleCli.java --tables
+
 
